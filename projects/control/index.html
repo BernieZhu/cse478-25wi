@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <meta name="generator" content="Hugo 0.82.0" />
+
+  <title>CSE 478 | Project 3: Control</title>
+
+  
+  <link rel="stylesheet" href="/courses/cse478/25wi/css/style.min.ecaf9ba3e25bf0e4c0d3a033f865796bf2281f8c58839e7f2290407c7c779834.css">
+  </head>
+
+  <body><header class="courseweb-header">
+  <nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark">
+    <a class="navbar-brand navbar-brand-filled bg-uwpurple d-none d-sm-inline" href="/courses/cse478/25wi/">CSE 478</a>
+    <a class="navbar-brand d-sm-none" href="/courses/cse478/25wi/">CSE 478</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    
+    <div id="nav" class="collapse navbar-collapse">
+      <ul class="navbar-nav mr-auto">
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/courses/cse478/25wi/schedule/">Schedule</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link active" href="/courses/cse478/25wi/projects/">Projects</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/courses/cse478/25wi/mushr_lab/">Lab Guide</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/courses/cse478/25wi/discussion/">Discussion</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="https://edstem.org/us/courses/50038/discussion/">Ed</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="https://canvas.uw.edu/courses/1694425">Canvas</a>
+        </li>
+        
+        
+        
+        
+        
+      </ul>
+    </div>
+    <span class="navbar-brand navbar-brand-filled bg-uwpurple d-none d-md-inline">25wi</span>
+  </nav>
+</header>
+
+    <div class="container">
+      
+<div class="row">
+  <div class="col-12">
+    <h1>Project 3: Control</h1>
+
+    
+    
+    
+    <img src="/courses/cse478/25wi/projects/control/act.svg" class="img-fluid w-500px py-4"  alt="A MuSHR car that has deviated from a pre-planned path tries to correct its course."/>
+    
+    
+
+    <h2 id="overview">Overview</h2>
+<p>In this project, you will implement several fundamental path tracking control algorithms: PID, Pure Pursuit, and MPC.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> To accurately track the desired paths, you will tune the parameters that govern their behavior. As a result, you will also become familiar with the strengths and weaknesses of the various feedback control strategies discussed in this course.</p>
+<p>Please complete this assignment with your group from the previous assignment.</p>
+<p>The relevant lectures are:</p>
+<ul>
+<li>Feedback Control</li>
+<li>PID Control, Pure Pursuit Control</li>
+<li>Model-Predictive Control and LQR</li>
+</ul>
+<h2 id="getting-started">Getting Started</h2>
+<p>You’ll need to pull down the latest version of the starter repository to get the Project 3 starter code.</p>
+<p>If you haven’t already, add our <a href="https://gitlab.cs.washington.edu/cse478/25wi/mushr478">starter repository</a> as a new remote repository, named <code>upstream</code>. Then, you’ll pull the files from this <code>upstream</code> remote repository into your local repository.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/mushr_ws/src/mushr478</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git remote add upstream https://gitlab.cs.washington.edu/cse478/25wi/mushr478.git</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git remote <span class="at">-v</span>  <span class="co"># You should see a line starting with &quot;upstream&quot;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git pull upstream main</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ..</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catkin build</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source ~/mushr_ws/devel/setup.bash</span></code></pre></div>
+<p>If the builds succeed and you can run <code>roscd control</code>, you’re ready to start! Please post on Ed if you have issues at this point.</p>
+<h2 id="code-overview">Code Overview</h2>
+<p>We decompose the problem of computing the robot’s actions into two components: motion planning and control. A motion planning algorithm generates an ideal <strong>reference path</strong>, while a feedback controller uses the robot’s current state (e.g. from the <code>localization</code> package) to follow this reference path. In this project, we will use a series of pre-programmed paths; you will implement motion planning algorithms in the next project.</p>
+<p>We’ve provided a <code>BaseController</code> class in <code>src/control/controller.py</code>. The controllers you will implement (<code>PIDController</code>, <code>PurePursuitController</code>, <code>ModelPredictiveController</code>) extend this base class.</p>
+<p>The <code>ControlROS</code> class in <code>src/control/control_ros.py</code> provides a ROS interface to the controller classes. <code>ControlROS</code> provides a <a href="http://wiki.ros.org/Services">ROS service</a> defined by <code>FollowPath.srv</code>. This service accepts a request (consisting of a <a href="http://docs.ros.org/en/noetic/api/nav_msgs/html/msg/Path.html"><code>nav_msgs/Path</code></a> and desired speed) and asks the controller to track the geometric path at that speed. While the controller is tracking the path, <code>ControlROS</code> also publishes to several visualization topics.</p>
+<p>The control loop is implemented in <code>BaseController</code>. <code>BaseController.get_reference_index</code> selects a reference state from the path. Each subclass implements controller-specific logic in the <code>get_error</code> and <code>get_control</code> methods. In order to operate at the desired control rate<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>, your implementations of all three methods must be efficient. Try to vectorize where you can!</p>
+<p>The reference paths being tracked by your controllers have reference velocities, and are represented as NumPy arrays of shape (L, 4). Paths with velocity information are named <code>path_xytv</code>, while paths without velocity information are named <code>path_xyt</code>.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> Similarly, a reference state with velocity information is named <code>reference_xytv</code>.</p>
+<p>The control vectors returned by <code>get_control</code> contain both velocity and steering angle. In this project, the velocity should be copied directly from the reference velocity. The commanded steering angle will come from your PID/Pure Pursuit/MPC logic.</p>
+<blockquote>
+<p>Implementing MPC will require more time than the other two controllers. Please plan accordingly.</p>
+</blockquote>
+<h2 id="q1.-reference-state-selection-and-error-computation">Q1. Reference State Selection and Error Computation</h2>
+<p><strong>Q1.1</strong> Implement the <code>BaseController.get_reference_index</code> method to select a reference state from the path that is about <code>distance_lookahead</code> from the current robot state (<code>src/control/controller.py</code>). This will be used as the target state for your controllers. To avoid selecting a reference state that would take the robot backwards, you should first compute the closest waypoint on the path and only consider states on the path that come after this closest waypoint.</p>
+<p>To compute a reference state that is some lookahead distance away, we recommend first finding the state on the path that is closest to the current vehicle state. Then, step along the path’s waypoints and select the index of the first state that is greater than the lookahead distance from the current state. (You can also look back one index to see which state is closer to the desired lookahead distance.) If no such state exists, you can simply return the final state.</p>
+<p>You can verify your implementation on the provided test suite by running <code>python3 test/controller.py</code>. Your code should pass all test cases starting with <code>test_get_reference_index</code>.</p>
+<p><strong>Q1.2</strong>: Implement the <code>compute_position_in_frame</code> function in <code>src/control/controller.py</code>. You may find the lecture slides or the following derivation useful. This function will be used by your PID and Pure Pursuit controllers: the PID error is the current robot position <span class="math inline">\((x, y)\)</span> expressed in the coordinate frame defined by <span class="math inline">\((x_\text{ref}, y_\text{ref}, \theta_\text{ref})\)</span>, while the Pure Pursuit error is the position <span class="math inline">\((x_\text{ref}, y_\text{ref})\)</span> expressed in the coordinate frame defined by <span class="math inline">\((x, y, \theta)\)</span>.</p>
+<details>
+<summary>
+Computing Position in a New Coordinate Frame
+</summary>
+<p>Let <span class="math inline">\(\mathbf{p} = (x, y)\)</span> be the position that we want to be expressed in a new coordinate frame <span class="math inline">\(F\)</span> defined by the state <span class="math inline">\((x_F, y_F, \theta_F)\)</span>. Then, <span class="math inline">\(\mathbf{p}\)</span> expressed in frame <span class="math inline">\(F\)</span> is <span class="math inline">\({^F}\mathbf{p}\)</span>.</p>
+<p><span class="math display">\[
+\begin{align}
+{^F}\mathbf{p}
+= R(-\theta_F) \left( \begin{bmatrix} x \\ y \end{bmatrix} - \begin{bmatrix} x_F \\ y_F \end{bmatrix} \right)
+= \begin{bmatrix} \cos \theta_F &amp; \sin \theta_F \\ -\sin \theta_F &amp; \cos \theta_F \end{bmatrix} \left( \begin{bmatrix} x \\ y \end{bmatrix} - \begin{bmatrix} x_F \\ y_F \end{bmatrix} \right)
+\end{align}
+\]</span></p>
+</details>
+<p>After completing Q1.1 and Q1.2, expect your code to pass all the test cases in <code>test/controller.py</code>.</p>
+<h2 id="q2.-pid-controller">Q2. PID Controller</h2>
+<p>The proportional-integral-derivative (PID) controller is a feedback control mechanism that is simple to implement and widely used. It is often defined as <span class="math display">\[
+u(t) = -\left( K_p e(t) + K_i \int_0^t e(t&#39;) dt&#39; + K_d \frac{d e(t)}{dt} \right)
+\]</span> where <span class="math inline">\(K_p\)</span>, <span class="math inline">\(K_i\)</span>, and <span class="math inline">\(K_d\)</span>, are all non-negative coefficients for the proportional, integral, and derivative terms of the error <span class="math inline">\(e(t)\)</span> at time <span class="math inline">\(t\)</span>. In this project, we will actually implement a PD controller, which drops the integral term.</p>
+<p><strong>Q2.1</strong>: Implement the PD control law in <code>PID.get_control</code> for <span class="math inline">\(e(t) = e_\text{ct}\)</span>. Note that the <code>error</code> argument is the result of <code>get_error</code>, a two-element NumPy array <span class="math inline">\([e_\text{at}, e_\text{ct}]\)</span>. The returned control should be a two-element NumPy array <span class="math inline">\([v, \delta]\)</span> where <span class="math inline">\(v\)</span> is copied from the reference velocity and <span class="math inline">\(\delta\)</span> is the result of the PD control law. Hint: recall from lecture that the derivative of the cross-track error can written analytically as <span class="math inline">\(\frac{d e_\text{ct}}{dt} = v \sin (\theta - \theta_\text{ref})\)</span>.</p>
+<p>You can verify your implementation on the provided test suite by running <code>python3 test/pid.py</code>.</p>
+<h3 id="exploring-pid-parameters">Exploring PID Parameters</h3>
+<p>The PID controller is controlled by the gains <span class="math inline">\(K_p, K_i, K_d\)</span>. We’ve provided some initial values in <code>config/parameters.yaml</code>; note that <span class="math inline">\(K_i = 0\)</span> since our implementation is a PD controller. As with the previous project, it’ll be up to you to tune the gains <span class="math inline">\(K_p, K_d\)</span> to achieve good path tracking performance. <a href="https://en.wikipedia.org/wiki/PID_controller%23Manual_tuning">This Wikipedia article</a> describes a principled approach to finding robust PID gains.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> You may also find <a href="https://www.a1k0n.net/2018/11/13/fast-line-following.html">this blog post</a> useful; the notation is somewhat different, but it describes a number of tracking controllers and you can use the sliders to build your intuition for how each gain affects the controller.</p>
+<div class="deliverable">
+<blockquote>
+<p>Tune your gains <span class="math inline">\(K_p, K_d\)</span> to achieve good tracking performance. In your writeup, briefly explain your tuning process, justify your final gains, and include the plots generated by PlotJuggler for three reference paths: <code>circle</code>, <code>left-turn</code>, and <code>wave</code>. Suggested names for these plots: <code>pid_circle.png</code>, <code>pid_left.png</code>, <code>pid_wave.png</code>. (Instructions for sending reference paths are in the next section.)</p>
+</blockquote>
+</div>
+<p>After tuning your gains, evaluate your implementation on the different paths with the following test. Your implementation is expected to track each path within a specified error threshold.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rostest control controller_performance.test type:=pid</span></code></pre></div>
+<h2 id="controller-visualization-tools">Controller Visualization Tools</h2>
+<p>To evaluate your controller with reference paths, we’ll launch our environment across a few terminals.</p>
+<p>Open one terminal and run:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch cse478 teleop.launch teleop:=false</span></code></pre></div>
+<p>In another, launch a controller (with your choice of <code>pid</code>, <code>pp</code>, or <code>mpc</code>):</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch control controller.launch type:=pid</span></code></pre></div>
+<p>Now, to see the controller node’s visualization data:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rosrun rviz rviz <span class="at">-d</span> <span class="va">$(</span><span class="ex">rospack</span> find control<span class="va">)</span>/config/control.rviz</span></code></pre></div>
+<p>Finally, send a reference path to the controller. The available path names are: <code>line</code>, <code>circle</code>, <code>left-turn</code>, <code>right-turn</code>, <code>wave</code>, and <code>saw</code>. (<code>saw</code> is a challenging path, so don’t worry if your controllers can’t track it very well.)</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rosrun control path_sender line</span></code></pre></div>
+<p>In the RViz window, you should see a visualization of the reference path you’ve selected, as well as how the MuSHR car moves according to the PD controller. Here is a snapshot of the staff solution PD controller tracking the default <code>wave</code> path. To test the robustness of your controller, you can also vary the parameters of the paths and the initial state of the car. Learn more about the path parameterizations by running <code>path_sender</code> with the <code>-h</code> flag.</p>
+<figure class="figure mw-100 w-500px">
+    <a id="fig-pd-wave">
+    <img src="pid_wave.png"
+         alt="Figure 1: The MuSHR car tracking the default wave path with the staff PD controller."
+         class="figure-img img-fluid"
+    /> </a><figcaption class="figure-caption">
+            <p>Figure 1: The MuSHR car tracking the default <code>wave</code> path with the staff PD controller.</p>
+        </figcaption>
+</figure>
+
+<p>While you’re implementing your controller, it can be helpful to see a plot of its output over time. We have including a configuration for <a href="https://facontidavide.github.io/PlotJuggler/index.html">PlotJuggler</a>, a time series visualization tool, that lets you see the error and controls calculated by the controller in real time. Run the following command to start.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch control plotjuggler.launch</span></code></pre></div>
+<p>When PlotJuggler starts up, you’ll have to answer two questions fairly quickly so that it starts while the path is still being tracked. Click yes when it asks “Start the previously used streaming plugin? ROS Topic Subscriber” and select all the ROS topics that it asks about (<code>Ctrl-A</code>). If you see a warning about “Can’t find one or more curves.”, just close PlotJuggler and start again. Once PlotJuggler has been completely initialized, you can issue more paths and see the plots in real-time! When a path is complete, press the pause button on the left. You might see something similar to this. (To see the full path, you might want to increase the default value of “Buffer” to 30 in PlotJuggler.)</p>
+<figure class="figure mw-100 w-500px">
+    <a id="fig-pd-saw">
+    <img src="plotjuggler_pid_saw.png"
+         alt="Figure 3: The MuSHR car tracking the default saw path, as seen through PlotJuggler."
+         class="figure-img img-fluid"
+    /> </a><figcaption class="figure-caption">
+            <p>Figure 3: The MuSHR car tracking the default <code>saw</code> path, as seen through PlotJuggler.</p>
+        </figcaption>
+</figure>
+
+<p>If PlotJuggler isn’t already installed on your virtual machine, you can also run this command.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sudo apt install ros-noetic-plotjuggler-ros</span></code></pre></div>
+<h2 id="q3.-pure-pursuit-controller">Q3. Pure Pursuit Controller</h2>
+<p>Pure Pursuit is a classic feedback control mechanism for autonomous vehicles that calculates the circular arc between the robot’s current state and the reference state. In general, the lookahead distance used to select the reference state may change as the robot drives to reflect the curvature of the path, although your implementation will assume a fixed lookahead distance.</p>
+<p><strong>Q3.1</strong>: Implement the Pure Pursuit control law in <code>PurePursuit.get_control</code>. As before, the <code>error</code> argument is the result of <code>get_error</code>.</p>
+<p>You can verify your implementation on the provided test suite by running <code>python3 test/purepursuit.py</code>.</p>
+<h3 id="exploring-the-pure-pursuit-lookahead">Exploring the Pure Pursuit Lookahead</h3>
+<p>The Pure Pursuit controller only has one parameter to tune: the <code>distance_lookahead</code> to select the reference state. As before, we’ve provided an initial value in <code>config/parameters.yaml</code> that needs to be tuned to achieve good path tracking performance.</p>
+<p>To visualize the controller, follow the same steps from above but with the Pure Pursuit controller instead. As before, you are encouraged to vary the parameters of the paths and initial state of the car to test the robustness of your controller.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch control controller.launch type:=pp</span></code></pre></div>
+<p>Follow the same steps from above to evaluate the tracking performance of your tuned Pure Pursuit controller.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rostest control controller_performance.test type:=pp</span></code></pre></div>
+<div class="deliverable">
+<blockquote>
+<p>Tune the lookahead distance to achieve good tracking performance with Pure Pursuit. In your writeup, justify your final lookahead distance by including the controller plots for the <code>wave</code> reference path (<code>pp_wave.png</code>). Additionally, include plots for the <code>wave</code> path where the lookahead distance is too small/large and explain the resulting Pure Pursuit behavior (<code>pp_small.png</code>, <code>pp_large.png</code>).</p>
+</blockquote>
+</div>
+<div class="deliverable">
+<blockquote>
+<p>Evaluate the tracking performance on the <code>circle</code> path with radius parameters 5 and 0.5: <code>rosrun control path_sender circle --radius &lt;R&gt;</code>. How does varying the radius affect the robustness of your controller? Why?</p>
+</blockquote>
+</div>
+<p>To learn more about Pure Pursuit, you may also find the following supplementary readings interesting. <a href="https://www.ri.cmu.edu/pub_files/pub3/coulter_r_craig_1992_1/coulter_r_craig_1992_1.pdf">(Coulter, 1992)</a> is the original Pure Pursuit paper, which describes the algorithm and its history. <a href="https://arxiv.org/pdf/1604.07446.pdf">(Paden et al., 2016)</a> is a recent survey paper that describes a number of popular control techniques for vehicles, including Pure Pursuit.</p>
+<h2 id="q4.-model-predictive-controller-mpc">Q4. Model-Predictive Controller (MPC)</h2>
+<p>Although the PID and Pure Pursuit controllers you’ve implemented can be adequate in some driving conditions, additional factors may affect path tracking in practice. For example, nearby obstacles may require segments of the path to be tracked more closely, but are not incorporated into these simple controllers. More generally, these controllers are <em>myopic</em>: they reason solely about the current action and do not predict how that might impact future actions.</p>
+<p>MPC proceeds in two phases. First, it uses a model to solve an <span class="math inline">\(T\)</span>-horizon optimization problem. This problem is defined by a <strong>cost function</strong> <span class="math inline">\(J\)</span> that penalizes states and actions (e.g., states that are in collision); the solution is a sequence of <span class="math inline">\(T\)</span> actions that minimizes cost. Next, the system will execute the first action and update the current estimated state. The process repeats from this new estimated state.</p>
+<p>In your implementation, we will separate the optimization into four steps.</p>
+<ol type="1">
+<li>Sample <span class="math inline">\(K\)</span> sequences of <span class="math inline">\(T\)</span> controls (<code>sample_controls</code>).</li>
+<li>Use the kinematic car model from Project 2 to <strong>rollout</strong> the resulting <span class="math inline">\((T+1)\)</span>-length sequence of states, including the current estimated state (<code>get_rollout</code>).</li>
+<li>Compute the cost of each rollout from the <span class="math inline">\(T+1\)</span> resulting states (<code>compute_rollout_cost</code>).</li>
+<li>Of the <span class="math inline">\(K\)</span> rollouts, select the rollout with the lowest cost and return the first action from this sequence (<code>get_control</code>).</li>
+</ol>
+<p><strong>Q4.1</strong>: Implement <code>MPC.sample_controls</code>. This function should return a three-dimensional NumPy array with shape (K, T, 2), representing <span class="math inline">\(K\)</span> sequences of <span class="math inline">\(T\)</span> controls (velocity and steering angle). In your implementation, each of the sequences corresponds to a particular steering angle, applied <span class="math inline">\(T\)</span> times. The steering angles in the <span class="math inline">\(K\)</span> sequences should evenly span the range of the steering angle, defined by <code>self.min_delta</code> and <code>self.max_delta</code>. (Note that the velocity returned by this method is a placeholder, which will be replaced by the reference velocity in the next question. This is computed once per path tracking request for efficiency.)</p>
+<p>After completing Q4.1, expect your code to pass the <code>test_sample_controls</code> test case in <code>test/mpc.py</code>.</p>
+<p><strong>Q4.2</strong>: Implement <code>MPC.get_rollout</code>. This function should return a three-dimensional NumPy array with shape (K, T+1, 3), representing <span class="math inline">\(K\)</span> sequences of <span class="math inline">\(T+1\)</span> resulting states <span class="math inline">\((x, y, \theta)\)</span>. The first pose of each rollout should always be the current pose. To compute the change in state for each step of the rollout, call <code>self.motion_model.compute_changes</code> (which you implemented in Project 2). Remember to vectorize your implementation as much as you can!</p>
+<p>After completing Q4.2, expect your code to pass the <code>test_get_rollout</code> test case in <code>test/mpc.py</code>.</p>
+<p><strong>Q4.3</strong>: We’ve implemented <code>MPC.compute_rollout_cost</code> to call two components of the cost function: <code>MPC.compute_distance_cost</code> and <code>MPC.compute_collision_cost</code>. This cost function penalizes the rollout based on the distance between the final state and the reference state, as well as how many of the states in the rollout would result in collisions. The distance should be weighted by <code>self.error_w</code> and the collision cost should be weighted by <code>self.collision_w</code>. Implement both of these methods. (You should not change <code>compute_rollout_cost</code>.)</p>
+<p>After completing Q4.3, expect your code to pass the cost-related test cases in <code>test/mpc.py</code>.</p>
+<p>Tuning the parameters of a cost function requires principled design, iteration, and testing. We’ve asked you to implement a specific cost function with two terms and pre-specified weights, but these are all parameters that would be tuned in practice.</p>
+<figure class="figure mw-100 w-500px">
+    <a id="fig-mpc-cost">
+    <img src="cost_plot.png"
+         alt="Figure 4: MPC rollouts, colored by cost. Yellow rollouts have high cost due to collisions and blue have low cost."
+         class="figure-img img-fluid"
+    /> </a><figcaption class="figure-caption">
+            <p>Figure 4: MPC rollouts, colored by cost. Yellow rollouts have high cost due to collisions and blue have low cost.</p>
+        </figcaption>
+</figure>
+
+<p><strong>Q4.4</strong>: Implement <code>MPC.get_control</code> to solve the <span class="math inline">\(T\)</span>-horizon optimization problem. We’ve provided the logic for setting <code>self.sampled_controls</code> to match the reference velocity, so it’s ready for computing the rollout. Call the methods you’ve already implemented to fill in values for <code>rollouts</code> and <code>costs</code>, select the rollout with the lowest cost, and return the first action from this sequence.</p>
+<h3 id="exploring-mpc-parameters">Exploring MPC Parameters</h3>
+<p>MPC is controlled by the parameters <code>K</code> and <code>T</code> in <code>config/parameters.yaml</code>, which you should tune to achieve good path tracking performance. In particular, MPC should now allow you to track paths around obstacles that aren’t accounted for by the planner (<a href="#fig-mpc-circle">Figure 5</a>). (The reference paths from <code>path_sender</code> don’t consider obstacles at all.)</p>
+<p>We’ve also provided a fun new map under <code>cse478/maps</code> for you to play around in: <code>slalom_world</code>. MPC should be able to navigate around these obstacles! Start the simulator with this new map.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch cse478 teleop.launch teleop:=false map:=<span class="st">&#39;$(find cse478)/maps/slalom_world.yaml&#39;</span></span></code></pre></div>
+<p>You can set different initial positions with the “Publish Point” RViz tool to try navigating around different slaloms. Then, launch MPC and issue a reference path. As before, you may want to evaluate your controller with different path parameters.</p>
+<figure class="figure mw-50 w-50px">
+    <a id="fig-mpc-circle">
+    <img src="slalom.png"
+         alt="Figure 5: MPC avoiding obstacles in the slalom_world map while tracking the line path."
+         class="figure-img img-fluid"
+    /> </a><figcaption class="figure-caption">
+            <p>Figure 5: MPC avoiding obstacles in the <code>slalom_world</code> map while tracking the <code>line</code> path.</p>
+        </figcaption>
+</figure>
+
+<p>Follow the same steps from above to evaluate the tracking performance of your tuned MPC implementation.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rostest control controller_performance.test type:=mpc</span></code></pre></div>
+<div class="deliverable">
+<blockquote>
+<p>Tune the MPC parameters <span class="math inline">\(K\)</span> and <span class="math inline">\(T\)</span> to achieve good tracking performance. In your writeup, briefly explain your tuning process and justify your final parameters. Include the controller plots for the <code>circle</code>, <code>wave</code>, and <code>saw</code> reference paths in the default <code>sandbox</code> map (<code>mpc_circle.png</code>, <code>mpc_wave.png</code>, <code>mpc_saw.png</code>). What makes the <code>saw</code> path so difficult to track?</p>
+</blockquote>
+</div>
+<div class="deliverable">
+<blockquote>
+<p>Include the controller plots for two reference paths and slaloms of your choice in the <code>slalom_world</code> map.</p>
+</blockquote>
+</div>
+<h2 id="extra-credit-model-predictive-path-integral-mppi">Extra Credit : Model Predictive Path Integral (MPPI)</h2>
+<p><a href="https://homes.cs.washington.edu/~bboots/files/InformationTheoreticMPC.pdf">MPPI</a> is a variant of MPC with more flexibility which can optimize for general cost criteria, such as non-convex functions. It extends its applicability to a broader class of stochastic systems and representations by employing an information theoretic framework.</p>
+<p>Compared to MPC, there are two changes in MPPI. First, <span class="math inline">\(K\)</span> sequences of delta controls are sampled from a gaussian distribution. After that, MPPI will calculate the action weights using rollout returns. The actual action commands are obtained by adding the weighted sum of delta controls to the initial controls. Next, the system will execute the first action and update the current estimated state. The process repeats from this new estimated state.</p>
+<p>In your implementation, we will separate the optimization into four steps.</p>
+<ol type="1">
+<li>Sample <span class="math inline">\(K\)</span> sequences of <span class="math inline">\(T\)</span> controls (<code>sample_controls</code>).</li>
+<li>Use the kinematic car model from Project 2 to <strong>rollout</strong> the resulting <span class="math inline">\((T+1)\)</span>-length sequence of states, including the current estimated state (<code>get_rollout</code>).</li>
+<li>Compute the cost of each rollout from the <span class="math inline">\(T+1\)</span> resulting states (<code>compute_rollout_cost</code>).</li>
+<li>Of the <span class="math inline">\(K\)</span> rollouts, calculate the actions based on rollout returns and return the first action from this sequence (<code>get_control</code>).</li>
+</ol>
+<p><strong>Step 1</strong>: Implement <code>MPPI.sample_controls</code>. This function should return a three-dimensional NumPy array with shape (K, T, 2), representing <span class="math inline">\(K\)</span> sequences of <span class="math inline">\(T\)</span> controls (velocity and steering angle). In your implementation, each of the sequences corresponds to a particular steering angle, applied <span class="math inline">\(T\)</span> times. Unlike in MPC where the steering angles evenly span the range from between the min and the max steering angle, the steering angles for MPPI in the <span class="math inline">\(K\)</span> sequences should be sampled from a gaussian distribution, with mean <code>delta_mu</code> and variance <code>delta_sigma</code>. (Note that the velocity returned by this method is a placeholder, which will be replaced by the reference velocity in the next question. This is computed once per path tracking request for efficiency.)</p>
+<p>After completing step 1, expect your code to pass the <code>test_sample_controls</code> test case in <code>test/mppi.py</code>.</p>
+<p><strong>Step 2 and Step 3</strong>: you can reuse your MPC implementations.</p>
+<p><strong>Step 4</strong>: Implement <code>MPPI.get_control</code> to solve the <span class="math inline">\(T\)</span>-horizon optimization problem. We’ve provided the logic for setting <code>self.sampled_controls</code> to match the reference velocity and how to get the true action commands, so it’s ready for computing the rollout. Call the <code>get_rollout()</code> and <code>compute_rollout_cost()</code> methods that you have implemented to fill in the values for <code>rollouts</code> and <code>costs</code>. After that, you need to find the control sequence with the min cost given the costs of all the rollouts. After finding the minimum cost <span class="math inline">\(\beta\)</span>, use the following formula to get <span class="math inline">\(\eta\)</span>: <span class="math display">\[
+\eta = \sum_{k=0}^{K-1} \exp\left(-\frac{1}{\lambda} (cost(k) - \beta)\right)
+\]</span> which will be used to calculate the weights: <span class="math display">\[
+W(k) = \frac{1}{\eta} \exp\left(-\frac{1}{\lambda} (cost(k) - \beta)\right)
+\]</span></p>
+<p>Then, you can update the steering angle of <code>init_controls</code> by adding the product of the weights with <code>sampled_controls</code> to it. (Please follow algorithm 2 <a href="https://homes.cs.washington.edu/~bboots/files/InformationTheoreticMPC.pdf">here</a>)</p>
+<p>Tuning the parameters of temperature requires principled design, iteration, and testing. We’ve pre-specified weights, but these are all parameters that would be tuned in practice. You can play around with it to check the performance difference.</p>
+<p>Remember to vectorize your implementation as much as you can!</p>
+<h3 id="exploring-mppi-parameters">Exploring MPPI Parameters</h3>
+<p>MPPI is controlled by the parameters <code>K</code> and <code>T</code> in <code>config/parameters.yaml</code>. For this problem, we provide reference parameters <code>K</code> and <code>T</code> that enable MPPI to track trajectories. In particular, MPPI should now allow you to track paths like line, circle, turn, wave and saw by using those parameters. You can set different initial positions with the “Publish Point” RViz tool to try navigating around different slaloms. Then, launch MPPI and issue a reference path. As before, you may want to evaluate your controller with different path parameters.</p>
+<p>Follow the same steps from above to evaluate the tracking performance of your tuned MPC implementation.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rostest control controller_performance.test type:=mppi</span></code></pre></div>
+<div class="deliverable">
+<blockquote>
+<p>Report the tracking performance in your writeup with the provided parameters. Include the controller plots for the <code>circle</code>, <code>wave</code>, and <code>saw</code> reference paths in the default <code>sandbox</code> map (<code>mppi_circle.png</code>, <code>mppi_wave.png</code>, <code>mppi_saw.png</code>)</p>
+</blockquote>
+</div>
+<h2 id="running-on-the-car">Running on the Car</h2>
+<p>First, pull the repo to make sure your repo is up-to-date.</p>
+<p>In the MuSHR Lab, place your MuSHR car in the open space. Start teleop, then in another terminal run the following command to specify the map.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rosrun map_server map_server <span class="va">$(</span><span class="ex">rospack</span> find cse478<span class="va">)</span>/maps/cse022.yaml</span></code></pre></div>
+<p>In yet another terminal, start the particle filter with the following command.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch localization particle_filter_sim.launch use_namespace:=true publish_tf:=true tf_prefix:=<span class="st">&quot;car/&quot;</span></span></code></pre></div>
+<p><strong>NOTE:</strong> the above command has an additional <code>tf_prefix:="car/"</code> argument which is necessary when you run the particle filter on the real car.</p>
+<h3 id="path-following-with-pid-and-pp-controllers">Path following with PID and PP controllers</h3>
+<p>First, localize the car by setting its initial pose via Rviz.</p>
+<p>Run the PID controller:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch control controller.launch type:=pid tf_prefix:=<span class="st">&quot;car/&quot;</span></span></code></pre></div>
+<p><strong>NOTE:</strong> the above command has an additional <code>tf_prefix:="car/"</code> argument which is necessary when you run the controller on the real car.</p>
+<p>On your workstation, start Rviz and visualize:</p>
+<ul>
+<li>The <code>/map</code> Map topic</li>
+<li>The <code>/pf/inferred_pose</code> Pose topic</li>
+<li>The <code>/scan</code> LaserScan topic</li>
+<li>The <code>/pf/particles</code> PoseArray topic</li>
+<li>The <code>/car/controller/path/poses</code> PoseArray topic. Set the color to blue.</li>
+<li>The <code>/car/controller/real_path/poses</code> PoseArray topic. Set the color to green.</li>
+</ul>
+<p>Send a circular path to the controller:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rosrun control path_sender circle <span class="at">--tf_prefix</span> <span class="st">&quot;car/&quot;</span> <span class="at">--speed</span> 0.5 <span class="at">--radius</span> 1</span></code></pre></div>
+<p><strong>NOTE:</strong> the above command has an additional <code>--tf_prefix "car/"</code> argument which is necessary when you run the controller on the real car.</p>
+<p>Press and hold the R1 bumper of the controller to put the car in autonomous mode. You should see the car runs in a circle.</p>
+<p>Record a rosbag of the run including all the visualized topics, and a screenshot of rviz.</p>
+<p>Repeat the above with the <code>pp</code> controller.</p>
+<h3 id="obstacle-avoidance-with-the-mpc-controller">Obstacle avoidance with the MPC controller</h3>
+<p>First, localize the car by setting its initial pose via Rviz.</p>
+<p>Run the MPC controller:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch control controller.launch type:=mpc tf_prefix:=<span class="st">&quot;car/&quot;</span></span></code></pre></div>
+<p>On your workstation, start Rviz and visualize:</p>
+<ul>
+<li>The <code>/map</code> Map topic</li>
+<li>The <code>/pf/inferred_pose</code> Pose topic</li>
+<li>The <code>/scan</code> LaserScan topic</li>
+<li>The <code>/pf/particles</code> PoseArray topic</li>
+<li>The <code>/car/controller/path/poses</code> PoseArray topic. Set the color to blue.</li>
+<li>The <code>/car/controller/real_path/poses</code> PoseArray topic. Set the color to green.</li>
+<li>The <code>/car/controller/rollouts</code> MarkerArray topic.</li>
+</ul>
+<p>Place your car in a location like this, where there is an obstacle in front of the car: <figure class="figure mw-100 w-500px">
+    <a id="fig-mpc-car-location">
+    <img src="mpc_car_location.png"
+         alt="An example location to test obstacle avoidance with the MPC controller."
+         class="figure-img img-fluid"
+    /> </a><figcaption class="figure-caption">
+            <p>An example location to test obstacle avoidance with the MPC controller.</p>
+        </figcaption>
+</figure>
+</p>
+<p>Send the following line path to the controller:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rosrun control path_sender line <span class="at">--tf_prefix</span> <span class="st">&quot;car/&quot;</span> <span class="at">--speed</span> 0.5 <span class="at">--length</span> 5 <span class="at">--waypoint-sep</span> 1</span></code></pre></div>
+<p>Press and hold the R1 bumper of the controller to put the car in autonomous mode. You should see the car moving forward and avoiding the obstacle. Tune your controller if necessary (e.g., the planning horizon <span class="math inline">\(T\)</span>) so that the car can successfully avoid the obstacle. You may also tune <code>--speed</code> and <code>--waypoint-sep</code> parameters to get the best possible result.</p>
+<p>Record a rosbag of the run including all the visualized topics, and a screenshot of rviz.</p>
+<h2 id="deliverables">Deliverables</h2>
+<p>Answer the following writeup questions in <code>control/writeup/README.md</code>. All figures should be saved in the <code>control/writeup</code> directory.</p>
+<p>For the controller plots, you may submit <em>either an image of PlotJuggler or a screenshot of RViz</em> after the path has completed.</p>
+<ol type="1">
+<li><p>What tradeoffs did varying the <span class="math inline">\(K_p\)</span> gain have on your PD controller’s performance?</p></li>
+<li><p>Describe the tuning process for your PD controller. Justify your final gains <span class="math inline">\(K_p, K_d\)</span> and include the controller plots for three reference paths on the default <code>sandbox</code> map (<code>pid_circle.png</code>, <code>pid_left.png</code>, <code>pid_wave.png</code>).</p></li>
+<li><p>Describe the lookahead distance tuning process for your Pure Pursuit controller. Justify your final lookahead distance by including the controller plot for the <code>wave</code> reference path on the default <code>sandbox</code> map (<code>pp_wave.png</code>).</p></li>
+<li><p>Include controller plots on the <code>wave</code> path for cases where the lookahead distance is too small/large (<code>pp_small.png</code>, <code>pp_large.png</code>). Explain the resulting Pure Pursuit behavior.</p></li>
+<li><p>How does varying the radius of the <code>circle</code> path affect the robustness of the Pure Pursuit controller?</p></li>
+<li><p>Describe the tuning process for the MPC optimization parameters. Justify your final parameters <span class="math inline">\(K, T\)</span> by including the controller plots for the <code>circle</code>, <code>wave</code>, and <code>saw</code> reference paths on the default <code>sandbox</code> map. What makes the <code>saw</code> path so difficult to track?</p></li>
+<li><p>Include controller plots for two reference paths and slaloms of your choice in the <code>slalom_world</code> map.</p></li>
+<li><p>In this project, we asked you to implement a very specific MPC cost function that only includes distance and collision terms (and specific weights for the two terms). What other terms might you include, if you were to customize your cost function? (You don’t have to implement this, just describe some ideas.)</p></li>
+<li><p>Of your three tuned controllers, in which settings is each controller most robust? Which controller worked best in high-speed regimes? You can set the desired speed by adding the <code>--speed &lt;SPEED&gt;</code> flag to <code>path_sender</code>.</p></li>
+<li><p>Include a bag file and a screenshot of rviz for each controller (<code>pid</code>, <code>pp</code> and <code>mpc</code>) running on the real car. See above for the detailed instructions.</p></li>
+<li><p>Include plots and required descriptions for MPPI if you finished extra credit part.</p></li>
+</ol>
+<h2 id="submission">Submission</h2>
+<p>As with the previous projects, you will use Git to submit your project (code, writeup and plots).</p>
+<p>From your <code>mushr478</code> directory, add all of the writeup files and changed code files. Commit those changes, then create a Git tag called <code>submit-proj3</code>. Pushing the tag is how we’ll know when your project is ready for grading.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/mushr_ws/src/mushr478/</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git diff                             <span class="co"># See all your changes</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git add .                            <span class="co"># Add all the changed files</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git commit <span class="at">-m</span> <span class="st">&#39;Finished Project 3!&#39;</span>  <span class="co"># Or write a more descriptive commit message</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git push                             <span class="co"># Push changes to your GitLab repository</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git tag submit-proj3                 <span class="co"># Create a tag named submit-proj3</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git push <span class="at">--tags</span>                      <span class="co"># Push the submit-proj3 tag to GitLab</span></span></code></pre></div>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>The controllers you will implement have been used in the <a href="http://robots.stanford.edu/papers/thrun.stanley05.pdf">DARPA Grand Challenge</a> and <a href="https://www.ri.cmu.edu/pub_files/pub4/urmson_christopher_2008_1/urmson_christopher_2008_1.pdf">DARPA Urban Challenge</a> among many other scenarios.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>Our PID and Pure Pursuit implementations operate at ~50 Hz. Our tuned MPC operates at ~25 Hz, trading off a higher control frequency for a longer search horizon.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>A <code>path_xyt</code> is a converted <code>nav_msgs/Path</code> message, represented as a NumPy array of shape (L, 3). <code>ControlROS</code> adds velocity information to create <code>path_xytv</code> before sending that to your controllers.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4" role="doc-endnote"><p>Note that this approach is designed to tune <span class="math inline">\(K_i\)</span> as well, so it may not perform quite as well when only given <span class="math inline">\(K_p\)</span> and <span class="math inline">\(K_d\)</span> to tune.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+  </div>
+</div>
+
+
+<script type="text/javascript" src="/courses/cse478/25wi/js/index.js" defer></script>
+
+    </div>
+    <footer class="courseweb-footer">
+  <div class="float-left courseweb-cse-wordmark">
+    <img class="img-fluid"
+         src="/courses/cse478/25wi/img/cse-wordmark.png"
+         alt="Paul G. Allen School of Computer Science & Engineering" />
+  </div>
+  <div class="float-right">
+    <a href="//www.washington.edu/online/terms/">UW Site Use Agreement</a>
+  </div>    
+</footer>
+
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+
+  </body>
+</html>

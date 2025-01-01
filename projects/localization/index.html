@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <meta name="generator" content="Hugo 0.82.0" />
+
+  <title>CSE 478 | Project 2: Localization</title>
+
+  
+  <link rel="stylesheet" href="/courses/cse478/25wi/css/style.min.ecaf9ba3e25bf0e4c0d3a033f865796bf2281f8c58839e7f2290407c7c779834.css">
+  </head>
+
+  <body><header class="courseweb-header">
+  <nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark">
+    <a class="navbar-brand navbar-brand-filled bg-uwpurple d-none d-sm-inline" href="/courses/cse478/25wi/">CSE 478</a>
+    <a class="navbar-brand d-sm-none" href="/courses/cse478/25wi/">CSE 478</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    
+    <div id="nav" class="collapse navbar-collapse">
+      <ul class="navbar-nav mr-auto">
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/courses/cse478/25wi/schedule/">Schedule</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link active" href="/courses/cse478/25wi/projects/">Projects</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/courses/cse478/25wi/mushr_lab/">Lab Guide</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/courses/cse478/25wi/discussion/">Discussion</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="https://edstem.org/us/courses/50038/discussion/">Ed</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="https://canvas.uw.edu/courses/1694425">Canvas</a>
+        </li>
+        
+        
+        
+        
+        
+      </ul>
+    </div>
+    <span class="navbar-brand navbar-brand-filled bg-uwpurple d-none d-md-inline">25wi</span>
+  </nav>
+</header>
+
+    <div class="container">
+      
+<div class="row">
+  <div class="col-12">
+    <h1>Project 2: Localization</h1>
+
+    
+    
+    
+    <img src="/courses/cse478/25wi/projects/localization/sense.svg" class="img-fluid w-500px py-4"  alt="A MuSHR car with uncertain state uses range sensors to localize within a known hallway environment."/>
+    
+    
+
+    <h2 id="overview">Overview</h2>
+<p>In this project, you will localize your MuSHR car by implementing the particle filter algorithm. You will implement different parts of the particle filter: the motion model, the sensor model, and the overall filtering framework. To accurately estimate the car’s state, you will also tune parameters that govern the particle filter’s behavior.</p>
+<p>Please complete this assignment with your group from the previous assignment.</p>
+<p>The relevant lectures are:</p>
+<ul>
+<li>State Estimation, Bayesian Filtering</li>
+<li>Markov Localization</li>
+<li>Monte Carlo Sampling, Importance Sampling</li>
+<li>Particle Filtering</li>
+</ul>
+<h2 id="getting-started">Getting Started</h2>
+<p>You can use the same Virtual Machine as you did in Project 1 for your development in Project 2. Follow these steps to get your workspace ready for Project 2:</p>
+<p>You’ll need to add our <a href="https://gitlab.cs.washington.edu/cse478/25wi/mushr478">starter repository</a> as a new <strong>remote</strong> repository, named <code>upstream</code>. You’ll be able to pull the files from this <code>upstream</code> remote repository into your local repository to receive starter code updates. Running <code>git pull upstream main</code> should populate your repository with our Project 2 starter code.</p>
+<p>From a fresh terminal:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> <span class="co"># Add upstream remote repository</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/mushr_ws/src/mushr478</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git remote add upstream https://gitlab.cs.washington.edu/cse478/25wi/mushr478.git</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git pull upstream main</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> <span class="co"># Build and activate projects workspace</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source ~/dependencies_ws/devel/setup.bash</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/mushr_ws</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catkin clean</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catkin build</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source ~/mushr_ws/devel/setup.bash</span></code></pre></div>
+<p>If the builds succeed and you can run <code>roscd localization</code>, you’re ready to start! Please post on Ed if you have issues at this point.</p>
+<h2 id="state-estimation-definitions">State Estimation Definitions</h2>
+<p>Assume that the MuSHR car drives on a flat plane and localizes within a known map <span class="math inline">\(m\)</span>.</p>
+<ul>
+<li><strong>States</strong> are defined as <span class="math inline">\(\mathbf{x}_t = (x_t, y_t, \theta_t)\)</span> where <span class="math inline">\((x_t, y_t)\)</span> is the car’s 2D position and <span class="math inline">\(\theta_t\)</span> is its heading direction, with respect to the map’s reference frame.</li>
+<li><strong>Controls</strong> are defined as <span class="math inline">\(\mathbf{u}_t = (v_t, \delta_t)\)</span> where <span class="math inline">\(v_t\)</span> is the speed and <span class="math inline">\(\delta_t\)</span> is the steering angle, with respect to the car’s rear-axle reference frame.</li>
+<li><strong>Sensor measurements</strong> are defined as <span class="math inline">\(\mathbf{z}_t = (z_t^1, z_t^2, \cdots, z_t^K)\)</span> where each <span class="math inline">\(z_t^k\)</span> is a range (distance) measurement, with respect to the MuSHR car’s LIDAR unit’s reference frame.</li>
+<li>The <strong>motion model</strong> specifies a probability distribution <span class="math inline">\(P(\mathbf{x}_t | \mathbf{x}_{t-1}, \mathbf{u}_t)\)</span>, i.e. the probability of reaching a state <span class="math inline">\(\mathbf{x}_t\)</span> given that control <span class="math inline">\(\mathbf{u}_t\)</span> is applied from state <span class="math inline">\(\mathbf{x}_{t-1}\)</span>.</li>
+<li>The <strong>sensor model</strong> captures the probability <span class="math inline">\(p(\mathbf{z}_t | \mathbf{x}_t, m)\)</span>, i.e. the probability of receiving sensor measurement <span class="math inline">\(\mathbf{z}_t\)</span> given that the robot is in state <span class="math inline">\(\mathbf{x}_t\)</span> and the environment map is <span class="math inline">\(m\)</span>.</li>
+</ul>
+<h2 id="code-overview">Code Overview</h2>
+<p>Your particle filter keeps track of the possible states of the car using particles and weights, which are NumPy arrays of shape (M, 3) and (M,) respectively. Each particle is a candidate state, and the weight represents its probability.</p>
+<p>We’ve provided a <code>ParticleFilter</code> class in <code>particle_filter.py</code>, which constructs instances of the <code>KinematicCarMotionModelROS</code> and <code>LaserScanSensorModelROS</code> classes. These classes are wrappers around the classes you will actually fill in with your implementations: <code>KinematicCarMotionModel</code> and <code>SingleBeamSensorModel</code>. The <code>*ROS</code> classes subscribe to the control/sensor ROS topics, and asynchronously update the particles and weights when the robot sends a control command or receives a laser scan from the sensor. This allows the particle filter to use all the messages that it receives, rather than operating at the rate of the slowest topic. You will also implement the <code>LowVarianceSampler</code> class for particle resampling.</p>
+<p>Our implementation <em>shares</em> the <code>particles</code> and <code>weights</code> NumPy arrays between all four classes, rather than passing large arrays between them. This strategy is more efficient, but access to the particles and weights must then be synchronized. (We don’t want two classes to be simultaneously modifying the particles or weights.) As a result, the four classes also share a Python <code>Lock</code> object in their <code>self.state_lock</code> instance variable, and must acquire the lock before modifying the particles or weights. We’ve handled acquiring/releasing the lock, but your implementations must <em>modify</em> the entries of the particles and weights NumPy arrays in-place<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
+<h2 id="q1.-motion-model">Q1. Motion Model</h2>
+<p>In this question, you will implement the kinematic car motion model.</p>
+<figure class="figure mw-100 w-500px">
+    <a id="fig-kinematic-model">
+    <img src="car_model.svg"
+         alt="Figure 1: Visual representation of the kinematic car model"
+         class="figure-img img-fluid"
+    /> </a><figcaption class="figure-caption">
+            <p>Figure 1: Visual representation of the kinematic car model</p>
+        </figcaption>
+</figure>
+
+<details>
+<summary>
+Motion Model Derivation
+</summary>
+<p>Let’s first review the kinematic model of the car and annotate the relevant lengths and angles (<a href="#fig-kinematic-model">Figure 1</a>).</p>
+<p>First, let’s assume that there is no control and that the velocity was stable and the steering angle is <em>zero</em>. We can then write out the change in states: <span class="math display">\[
+\begin{align}
+\dot{x} &amp;= v \cos \theta \\
+\dot{y} &amp;= v \sin \theta \\
+\dot{\theta} &amp;= \omega
+\end{align}
+\]</span> where <span class="math inline">\(\omega\)</span> is the angular velocity from the center of rotation to the center of the rear axle.</p>
+<p>By the definition of angular velocity: <span class="math display">\[
+\omega = \frac{v}{R} = \frac{v}{L} \tan \delta
+\]</span></p>
+<p>Formally, the changes in states are: <span class="math display">\[
+\begin{align}
+\frac{\partial x}{\partial t} &amp;= v \cos \theta \\
+\frac{\partial y}{\partial t} &amp;= v \sin \theta \\
+\frac{\partial \theta}{\partial t} &amp;= \frac{v}{L} \tan \delta
+\end{align}
+\]</span></p>
+<p>After apply control <span class="math inline">\(\mathbf{u}_t\)</span>, integrate over the time step: <span class="math display">\[
+\begin{align}
+\int_{\theta_{t}}^{\theta_{t+1}}d\theta &amp;=
+\int_{t}^{t+\Delta t} \frac{v}{L} \tan \delta dt \\
+\theta_{t+1}-\theta_{t} &amp;=\frac{v}{L} \tan \delta \Delta t
+\end{align}
+\]</span></p>
+<p>Changes in positions: <span class="math display">\[
+\int_{x_{t}}^{x_{t+1}} d x
+= \int_{t}^{t+\Delta t} v \cos \theta d t
+= \int_{t}^{t+\Delta t} v \cos \theta \frac{d \theta}{\frac{v}{L} \tan \delta}
+= \frac{L}{\tan \delta} \int_{\theta_{t}}^{\theta_{t+1}} \cos \theta d \theta
+\]</span> <span class="math display">\[
+x_{t+1}-x_{t} = \frac{L}{\tan \delta}\left[ \sin \theta_{t+1} - \sin \theta_{t} \right]
+\]</span></p>
+<p><span class="math display">\[
+\int_{y_{t}}^{y_{t+1}} dy
+= \int_{t}^{t+\Delta t} v \sin \theta d t
+= \int_{t}^{t+\Delta t} v \sin \theta \frac{d \theta}{\frac{v}{L} \tan \delta}
+=\frac{L}{\tan \delta} \int_{\theta_{t}}^{\theta_{t+1}} \sin \theta d \theta
+\]</span> <span class="math display">\[
+y_{t+1}-y_{t} =\frac{L}{\tan \delta} \left[ -\cos \theta_{t+1} + \cos \theta_{t} \right]
+\]</span></p>
+<p>Putting it all together: <span class="math display">\[
+\begin{align}
+\theta_{t+1}
+&amp;= \theta_{t} + \frac{v}{L} \tan \delta \Delta t \\
+x_{t+1}
+&amp;= x_{t} + \frac{L}{\tan \delta} \left[ \sin \theta_{t+1} - \sin \theta_{t} \right] \\
+y_{t+1}
+&amp;= y_{t} + \frac{L}{\tan \delta} \left[ -\cos \theta_{t+1} + \cos \theta_{t} \right] \\
+\end{align}
+\]</span></p>
+</details>
+<p><strong>Q1.1</strong>: Implement the kinematic car equations in the <code>KinematicCarMotionModel.compute_changes</code> method (<code>src/localization/motion_model.py</code>). Note that this method is deterministic: given initial state <span class="math inline">\(\mathbf{x}_{t-1}\)</span> and control <span class="math inline">\(\mathbf{u}_t\)</span>, it integrates the kinematic car equations and returns a change in state <span class="math inline">\(\Delta \mathbf{x}_t\)</span>. You may find the lecture slides or the above derivation useful.</p>
+<details>
+<summary>
+What if the steering angle is 0?
+</summary>
+<p>The update rule we derived divides by <span class="math inline">\(\tan \delta\)</span>, which means we’re dividing by 0 if the steering angle is 0. (Mathematically, the center of rotation is now infinitely far away.) Fortunately, the update rule becomes even simpler for this case: if there’s no steering angle, the car continues driving at angle <span class="math inline">\(\theta\)</span> with velocity <span class="math inline">\(v\)</span>.</p>
+<p><span class="math display">\[
+\begin{align}
+\theta_{t+1} &amp;= \theta_{t} \\
+x_{t+1} &amp;= x_{t} + v \cos \theta \Delta t\\
+y_{t+1} &amp;= y_{t} + v \sin \theta \Delta t
+\end{align}
+\]</span></p>
+<p>In your implementation, you should treat any steering angle where <span class="math inline">\(| \delta |\)</span> is less than <code>delta_threshold</code> as a zero steering angle.</p>
+</details>
+<p>You can verify your implementation on the provided test suite by running <code>python3 test/motion_model.py</code>. Your code should pass all test cases starting with <code>test_compute_changes</code>.</p>
+<p>Next, to make this simple kinematic model robust to various sources of modeling error, you’ll add noise in three steps. Noise is parameterized by <span class="math inline">\(\sigma_v, \sigma_\delta\)</span> (action noise) and <span class="math inline">\(\sigma_x, \sigma_y, \sigma_\theta\)</span> (model noise).</p>
+<ol type="1">
+<li>Given <em>nominal</em> controls <span class="math inline">\(\mathbf{u}_t = (v_t, \delta_t)\)</span>, sample <em>noisy</em> controls <span class="math inline">\(\hat{\mathbf{u}}_t = (\hat{v}_t, \hat{\delta}_t)\)</span> where <span class="math inline">\(\hat{v}_t \sim \mathcal{N}(v_t, \sigma_v^2)\)</span> and <span class="math inline">\(\hat{\delta}_t \sim \mathcal{N}(\delta_t, \sigma_\delta^2)\)</span>.</li>
+<li>Integrate kinematic car equations with noisy controls <span class="math inline">\(\Delta \hat{\mathbf{x}}_t = \int_{t-1}^t f(\mathbf{x}_{t-1}, \hat{\mathbf{u}}_t) dt\)</span> (by calling the <code>compute_changes</code> method).</li>
+<li>Add model noise to the output <span class="math inline">\(\Delta \mathbf{x}_t \sim \mathcal{N}(\Delta \hat{\mathbf{x}}_t, \mathrm{diag}(\sigma_x^2, \sigma_y^2, \sigma_\theta^2))\)</span>.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></li>
+</ol>
+<p><strong>Q1.2</strong>: Implement this noisy motion model in the <code>KinematicCarMotionModel.apply_motion_model</code> method (<code>src/localization/motion_model.py</code>). There is an instance attribute corresponding to each noise parameter: <code>vel_std</code> corresponds to <span class="math inline">\(\sigma_v\)</span>, <code>delta_std</code> corresponds to <span class="math inline">\(\sigma_\delta\)</span>, etc. These instance attributes can be accessed with dot notation, e.g., <code>self.vel_std</code>.</p>
+<p>Your implementation should also wrap the resulting <span class="math inline">\(\theta\)</span> component of the state to the interval <span class="math inline">\((-\pi, \pi]\)</span>. Angles that differ by a multiple of <span class="math inline">\(2\pi\)</span> radians are equivalent. For example, if the resulting <span class="math inline">\(\theta\)</span> component was <span class="math inline">\(\theta = \frac{3\pi}{2}\)</span>, your implementation should return the equivalent angle <span class="math inline">\(\theta = -\frac{\pi}{2}\)</span>.</p>
+<p>After completing Q1.1 and Q1.2, expect your code to pass all the test cases in <code>test/motion_model.py</code>.</p>
+<blockquote>
+<p>Remember the plot you generated for Project 1 comparing the <code>norm_python</code> and <code>norm_numpy</code> computation times? Your implementations for Q1.1 and Q1.2 should be <em>vectorized</em> using <a href="https://numpy.org/doc/stable/user/basics.indexing.html">NumPy indexing</a>, rather than iterating over each particle with Python for loops. <a href="https://numpy.org/doc/stable/user/basics.indexing.html#boolean-array-indexing">Boolean array indexing</a> will be particularly useful when thresholding <span class="math inline">\(\delta\)</span>.</p>
+</blockquote>
+<h3 id="exploring-the-motion-model-parameters">Exploring the Motion Model Parameters</h3>
+<p>The noise in this motion model is controlled by the parameters <span class="math inline">\(\sigma_v, \sigma_\delta\)</span> (action noise) and <span class="math inline">\(\sigma_x, \sigma_y, \sigma_\theta\)</span> (model noise). We’ve provided some initial values in <code>config/parameters.yaml</code>, but it’ll be up to you to tune them and make sure they’re reasonable. We’ve provided a script to visualize samples from your probabilistic motion model, under the current noise parameters in <code>config/parameters.yaml</code>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rosrun localization make_motion_model_plot</span></code></pre></div>
+<p>The staff solution produces the following plots with our motion model that is tuned to match the physical MuSHR car. Try to match these plots by tuning your parameters.</p>
+<figure class="figure mw-100 w-500px">
+    <a id="fig-motion-model-cluster">
+    <img src="motion_model_cluster.png"
+         alt="Figure 2: The initial state (green) and state from integrating the noise-free model (red). Particles (blue) after moving forward and slightly to the left."
+         class="figure-img img-fluid"
+    /> </a><figcaption class="figure-caption">
+            <p>Figure 2: The initial state (green) and state from integrating the noise-free model (red). Particles (blue) after moving forward and slightly to the left.</p>
+        </figcaption>
+</figure>
+
+<figure class="figure mw-100 w-500px">
+    <a id="fig-motion-model-banana">
+    <img src="motion_model_banana.png"
+         alt="Figure 3: Particles (blue) after moving forward and to the left. This banana-shaped curve is expected when noise is added to the system."
+         class="figure-img img-fluid"
+    /> </a><figcaption class="figure-caption">
+            <p>Figure 3: Particles (blue) after moving forward and to the left. This banana-shaped curve is expected when noise is added to the system.</p>
+        </figcaption>
+</figure>
+
+<div class="deliverable">
+<blockquote>
+<p>In <code>scripts/make_motion_model_plot</code>, look at the <code>example_cases</code> dictionary that generates these two plots. Each key of this dictionary is a tuple of nominal velocity, nominal steering angle, and duration to apply those nominal commands. Why does the motion model produce more particles within 10cm of the noise-free model prediction in Figure 2 than Figure 3?</p>
+</blockquote>
+</div>
+<p>Your particle filter performance will depend upon the parameters you choose for the motion and sensor models. The key to tuning is first understanding how each parameter affects the model.</p>
+<div class="deliverable">
+<blockquote>
+<p>Tune your motion model parameters to match the staff parameters. To explain your tuning process, please save three versions of the figure with (3.0, 0.4, 0.5) that were generated by different parameters (<code>mm1.png</code>, <code>mm2.png</code>, <code>mm3.png</code>). In your writeup, explain what’s different between your plot and Figure 3 above, and how you’re changing the parameters in response to those differences. (Your last figure doesn’t need to match ours exactly.)</p>
+</blockquote>
+</div>
+<h2 id="q2.-sensor-model">Q2. Sensor Model</h2>
+<p>In this question, you’ll implement the LIDAR sensor model described in lecture. The MuSHR car’s LIDAR unit emits infrared laser beams into the environment at fixed angular intervals and returns the measured distance along those beams. For an unsuccessful measurement, it returns <a href="https://en.wikipedia.org/wiki/NaN">NaN</a> or 0. A sensor measurement <span class="math inline">\(\mathbf{z}_t\)</span> is a vector of distances, one for each beam: <span class="math inline">\(\mathbf{z_t} = (z_t^1, \cdots, z_t^K)\)</span>. Assuming that each distance <span class="math inline">\(z_t^k\)</span> is conditionally independent (given the state <span class="math inline">\(\mathbf{x}_t\)</span> and map <span class="math inline">\(m\)</span>) allows us to consider each beam separately.</p>
+<p>First, we’ve provided some starter code to generate a <em>simulated</em> observation <span class="math inline">\(\mathbf{z}_t^{k*}\)</span> given that the robot state is <span class="math inline">\(\mathbf{x}_t\)</span>. We use a raycasting library called <code>rangelibc</code> (implemented in C++/CUDA), which casts rays into the map <span class="math inline">\(m\)</span> from the robot’s state and measures the distance to any obstacle/wall the ray encounters. This is similar to how the physical LIDAR unit measures distances.</p>
+<p>Then, you’ll implement the sensor model <span class="math inline">\(P(z_t^k | \mathbf{x}_t, m)\)</span> by considering the four different modes discussed in lecture. Specifically, you will implement a model that measures how likely you are to see a real observation <span class="math inline">\(z_t^k\)</span>, given that the simulated observation was <span class="math inline">\(z_t^{k*}\)</span>. You may find the lecture slides or the following summary useful. (Note that the <span class="math inline">\(p_\text{short}\)</span> factor should be modeled more simply as with a linear probability density function.)</p>
+<details>
+<summary>
+Sensor Model Modes
+</summary>
+<p><span class="math display">\[
+\begin{align}
+p_\text{hit}(z_t^k | \mathbf{x}_t, m) &amp;=
+\begin{cases}
+\mathcal{N}(z_t^k; z_t^{k*}, \sigma_\text{hit}^2) &amp; 0 \leq z_t^k \leq z_\text{max} \\
+0 &amp; \text{otherwise}
+\end{cases} \\
+p_\text{short}(z_t^k | \mathbf{x}_t, m) &amp;=
+\begin{cases}
+2 \frac{z_t^{k*} - z_t^k}{z_t^{k*}} &amp; z_t^k &lt; z_t^{k*} \\
+0 &amp; \text{otherwise}
+\end{cases} \\
+p_\text{max}(z_t^k | \mathbf{x}_t, m) &amp;=
+\mathbb{I}(z_t^k = z_\text{max}) \\
+p_\text{rand}(z_t^k | \mathbf{x}_t, m) &amp;=
+\begin{cases}
+\frac{1}{z_\text{max}} &amp; 0 \leq z_t^k &lt; z_\text{max} \\
+0 &amp; \text{otherwise}
+\end{cases}
+\end{align}
+\]</span></p>
+<p>The notation <span class="math inline">\(\mathcal{N}(z_t^k; z_t^{k*}, \sigma_\text{hit}^2)\)</span> means that we’re computing the value of the probability density function, <em>not</em> that we’re sampling from a Gaussian distribution. (We would use <span class="math inline">\(x \sim \mathcal{N}(\mu, \sigma^2)\)</span> to denote that <span class="math inline">\(x\)</span> is being sampled from that Gaussian distribution.) The probability density function is a Gaussian parameterized with mean <span class="math inline">\(z_t^{k*}\)</span> and variance <span class="math inline">\(\sigma_\text{hit}^2\)</span>, and we want to find its value for the input <span class="math inline">\(z_t^k\)</span>, i.e.</p>
+<p><span class="math display">\[
+\frac{1}{\sqrt{2\pi\sigma_\text{hit}^2}} \exp \left\{ -\frac{1}{2} \left( \frac{z_t^k - z_t^{k*}}{\sigma_\text{hit}} \right)^2 \right\}
+\]</span></p>
+</details>
+<p>The sensor model mixes the factors together with weights <span class="math inline">\(z_\text{hit}, z_\text{short}, z_\text{max}, z_\text{rand}\)</span>. In addition, noise in the <span class="math inline">\(p_\text{hit}\)</span> factor is parameterized by <span class="math inline">\(\sigma_\text{hit}\)</span>. Later, you will choose values for these parameters.</p>
+<p>You can speed up the sensor model by pre-calculating and caching the sensor probabilities. On our 2D map, continuous values are converted to discrete pixel distances. You can then store the LIDAR range values in a table where each row is the actual measured value, the column is the expected value for a given LIDAR range, and the value is the probability. At runtime, you’ll use <code>rangelibc</code> to generate simulated range measurements, then use the cached table to quickly look up sensor probabilities.</p>
+<p><strong>Q2.1</strong>: Implement the sensor model in the <code>SingleBeamSensorModel.precompute_sensor_model</code> method (<code>src/localization/sensor_model.py</code>). Your implementation should accept zero as a possible weight for the factors, as long as one of them is nonzero. Make sure the table is normalized to ensure probabilities sum to 1. Your implementation should be vectorized.</p>
+<p>After completing Q2.1, expect your code to pass all the test cases when running <code>python3 test/sensor_model.py</code>.</p>
+<h3 id="exploring-the-sensor-model-parameters">Exploring the Sensor Model Parameters</h3>
+<p>We’ve provided two tools for tuning the sensor model. The following script visualizes the combined sensor model likelihood for a single simulated observation. Based on the similar plots from lecture and the textbook, this conditional probability plot should help you characterize the relative importance of <span class="math inline">\(z_\text{hit}, z_\text{short}, z_\text{max}, z_\text{rand}\)</span>. (Hint: which should be the largest weight?) Your tuned sensor model parameters will be specific to the MuSHR LIDAR unit, so it won’t match the exact plots from lecture or the textbook.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rosrun localization make_sensor_model_single_plot</span></code></pre></div>
+<p>As you’re tuning, it will also be helpful to visualize the likelihood of different poses given a single LIDAR scan. We’ve included a script that will pull the latest scan from the robot and evaluate your sensor model over a large number of poses covering every map cell. To use it, first launch the simulation with a new map.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch cse478 teleop.launch map:=<span class="st">&#39;$(find cse478)/maps/shapes_world_small.yaml&#39;</span></span></code></pre></div>
+<p>The more interesting the map, the more interesting the laser scan. Try some different maps<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> and poses! To reposition the robot in simulation, use the “Publish Point” tool in the RViz toolbar: select the tool, then click where on the map you want the robot to be. You can, of course, teleoperate the robot too. Reposition the robot, then when you’re happy run:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rosrun localization make_sensor_model_likelihood_plot</span></code></pre></div>
+<p>The node may take a few minutes to calculate all of the probabilities for larger maps. When it’s done, a plot will open showing you what your model “thinks” about each position in the map. Each pixel represents the most likely particle for the given position, with its color telling about the weight of the particle. The darker purple pixels had low weights assigned, while the brighter, yellower pixels were assigned higher weights.</p>
+<p>The staff solution produces the following plots with our sensor model that is tuned to match the physical MuSHR LIDAR. Try to match these plots by tuning your parameters.</p>
+<figure class="figure mw-100 w-500px">
+    <a id="fig-sensor-model-shapes-425-550">
+    <img src="sensor_model_shapes_425_550.png"
+         alt="Figure 4: Sensor model likelihood of the staff solution with the vehicle positioned at (4.25, 5.50, 0) on the shapes_world_small map."
+         class="figure-img img-fluid"
+    /> </a><figcaption class="figure-caption">
+            <p>Figure 4: Sensor model likelihood of the staff solution with the vehicle positioned at (4.25, 5.50, 0) on the <code>shapes_world_small</code> map.</p>
+        </figcaption>
+</figure>
+
+<figure class="figure mw-100 w-500px">
+    <a id="fig-sensor-model-shapes-9-9">
+    <img src="sensor_model_shapes_9_9.png"
+         alt="Figure 5: Sensor model likelihood of the staff solution with the vehicle positioned at (9, 9, 0) on the shapes_world_small map."
+         class="figure-img img-fluid"
+    /> </a><figcaption class="figure-caption">
+            <p>Figure 5: Sensor model likelihood of the staff solution with the vehicle positioned at (9, 9, 0) on the <code>shapes_world_small</code> map.</p>
+        </figcaption>
+</figure>
+
+<p>In general, you should expect the model to have multiple modes when the scan is ambiguous, i.e. if the car could’ve been in any number of places and “seen” the same thing with its sensor. This pattern is especially obvious in environments with symmetry and happens all the time in realistic maps. For instance, expect hallways to produce a similar effect, with a mode becoming a streak along the axis of the passage. Tuning won’t change the fact that the sensor can’t tell some locations from others, but it will adjust how much confidence the model puts in different types of plausible locations.</p>
+<div class="deliverable">
+<blockquote>
+<p>Tune the parameters of your sensor model to match the reference sensor model likelihood plots in Figure 4 and Figure 5. To explain your tuning process, please save three versions of the conditional probability plot for <span class="math inline">\(P(z_t^k | {z_t^k}^*)\)</span> that were generated by different sensor model parameters (<code>sm1.png</code>, <code>sm2.png</code>, <code>sm3.png</code>). In your writeup, document your intermediate parameter choices and explain the visual differences between your plots.</p>
+</blockquote>
+</div>
+<div class="deliverable">
+<blockquote>
+<p>With the final tuned parameters, provide the sensor model likelihood plot for the robot positioned at <span class="math inline">\((-9.6, 0.0, -2.5)\)</span> in the <code>maze_0</code> map. You can position the robot there precisely by providing arguments to the simulation launch file: <code>roslaunch cse478 teleop.launch map:='$(find cse478)/maps/maze_0.yaml' initial_x:=-9.6 initial_y:=0 initial_theta:=-2.5</code>.</p>
+</blockquote>
+</div>
+<h2 id="q3.-particle-filter">Q3. Particle Filter</h2>
+<p>Finally, you will implement the particle filter algorithm, which uses particles to represent the robot’s belief about its state <span class="math inline">\(Bel(\mathbf{x}_t)\)</span>. Each particle has a state <span class="math inline">\(\mathbf{x}_t^{(i)}\)</span>, which represents a hypothetical robot at that particular state. More particles will help approximate the true belief distribution more closely.</p>
+<p>Because the particle filter is recursive, it must be initialized with a prior belief over the robot’s state <span class="math inline">\(Bel(\mathbf{x}_0)\)</span>. In this project, we assume this prior belief is a Gaussian distribution centered around a particular state; it is represented with <span class="math inline">\(M\)</span> particles sampled from that distribution.</p>
+<p><strong>Q3.1</strong>: Implement the method <code>ParticleInitializer.reset_click_pose</code>, which initializes the belief of the robot (<code>src/localization/particle_filter.py</code>). Given a <a href="http://docs.ros.org/en/noetic/api/geometry_msgs/html/msg/Pose.html">geometry_msgs/Pose</a> message describing the robot’s initial state, your code should initialize the particles by sampling from this Gaussian distribution.</p>
+<p>After completing Q3.1, expect your code to pass all the test cases when running <code>python3 test/particle_initializer.py</code>.</p>
+<p>In your implementation, the particles and weights will be updated <em>asynchronously</em>. That is, the motion model is applied whenever the particle filter receives a control message (with the speed of the motor and steering angle). The sensor model is applied whenever the particle filter receives a laser scan. This asynchronous structure allows the particle filter to utilize all the messages that it receives, rather than operating at the rate of the slowest topic.</p>
+<h3 id="low-variance-resampling">Low-Variance Resampling</h3>
+<figure class="figure mw-100 w-500px">
+    <a id="fig-resampler">
+    <img src="resample.png"
+         alt="Figure 4: Low-variance resampling procedure (Probabilistic Robotics)."
+         class="figure-img img-fluid"
+    /> </a><figcaption class="figure-caption">
+            <p>Figure 4: Low-variance resampling procedure (<em>Probabilistic Robotics</em>).</p>
+        </figcaption>
+</figure>
+
+<p>Resampling allows the particle filter to drop low-probability particles in favor of further exploring high-probability particles. In your implementation, you will line up a series of intervals associated with each particle. Each interval’s size is equivalent to the normalized weight of the particle.</p>
+<p>Specifically, you will implement a low-variance resampler for your particle filter, as described in lecture.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> To draw <span class="math inline">\(M\)</span> samples, you will choose a random number <span class="math inline">\(r \in [0, \frac{1}{M}]\)</span>. Then, you will draw samples by checking which particles the numbers <span class="math inline">\(r, r + \frac{1}{M}, r + \frac{2}{M}, \cdots\)</span> correspond to.</p>
+<p>There are two advantages of this low-variance resampler, compared to sampling <span class="math inline">\(M\)</span> random numbers from the range <span class="math inline">\([0, 1]\)</span>. First, this strategy covers the space of samples more systematically. Second, if all the particle weights are the same, this low-variance resampler will sample all of them; no samples are lost.</p>
+<p><strong>Q3.2</strong>: Implement this low-variance resampler in the <code>LowVarianceSampler.resample</code> method (<code>src/localization/resampler.py</code>). You may find the <a href="https://numpy.org/doc/stable/reference/generated/numpy.searchsorted.html"><code>np.searchsorted</code></a> function useful for vectorizing the lookup.</p>
+<p>After completing Q3.2, expect your code to pass all the test cases when running <code>python3 test/resample.py</code>.</p>
+<h3 id="simulation-tests-with-teleoperation">Simulation Tests with Teleoperation</h3>
+<p>You can test your particle filter <strong>(including your tuned parameters)</strong> in simulation with:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch localization particle_filter_teleop_sim.launch map:=<span class="st">&#39;$(find cse478)/maps/cse2_2.yaml&#39;</span></span></code></pre></div>
+<p>By default, this will initialize a simulation with the robot at the origin and open a tailored RViz view of the world<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a>. To reposition the robot in simulation, use the “Publish Point” tool in the RViz toolbar: select the tool, then click where on the map you want the robot to be. You’ll see the green pose arrow move to that position in a default orientation. Your particle filter will need to be reinitialized; after moving the robot with “Publish Point”, you should reinitialize it by using the “2D Pose Estimate Tool”. Select the tool, then click on the position you want to specify and drag in the desired direction.</p>
+<p>As you drive the vehicle around, you should see your particle filter approximately correspond to the true pose of the robot.</p>
+<p>This launch file has two conveniences.</p>
+<ul>
+<li>You can pass an initial location using the arguments <code>initial_x</code>, <code>initial_y</code> and <code>initial_theta</code>. <code>initial_x:=16 initial_y:=28 initial_theta:=0</code> is a useful starting position for the <code>cse2_2</code> map. Note that both the simulation and your particle filter will be initialized with the values you provide.</li>
+<li>You can override your particle filter’s localization estimate with the true localization of the simulator by passing <code>fake_localization:=true</code>. Your particle filter will still operate like normal, but the robot will quietly cheat by using the simulator when it needs to calculate positions with respect to the map. The only observable difference for now is that the laser scan data will follow the ground truth pose arrow instead of your particle filtered inferred pose arrow, which may make it easier to see this data if your filter’s estimates are causing the scan to jump around too much.</li>
+</ul>
+<p>It may be helpful to see how the filter’s estimate compares to the ground truth in different situations. With the above launch file running, you can produce a plot showing the true and estimated paths with:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rosrun localization make_particle_filter_plot _duration:=30.0</span></code></pre></div>
+<p>The script will wait for you to reinitialize the filter, then collect data for the given duration.</p>
+<div class="deliverable">
+<blockquote>
+<p>After you’re satisfied with your particle filter’s performance, make a path plot for a 60-second drive through CSE2. Try to avoid driving backwards as it makes the graph difficult to interpret.</p>
+</blockquote>
+</div>
+<h3 id="simulation-tests-with-recorded-bag-files">Simulation Tests with Recorded Bag Files</h3>
+<p>We’ve collected several <strong>bags</strong> for you to test your particle filter against. A <a href="http://wiki.ros.org/Bags">bag</a> is a file in a special format containing serialized ROS messages that can be played back at will. This makes it possible to run a physical robot while saving diferent streams of messages and later test algorithms against the recorded data. These bags contain all the data necessary to run the particle filter, as well as the output of our particle filter when processing the same data.</p>
+<p>We’ve provided the <code>download_bags.sh</code> script, which will automatically download the bags to the <code>localization/bags</code> directory. Just run:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rosrun localization download_bags.sh</span></code></pre></div>
+<p>To evaluate your particle filter implementation <strong>(including your tuned parameters)</strong> with a bagfile, run:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rostest localization particle_filter.test bag_name:=<span class="st">&quot;circle&quot;</span> <span class="at">--text</span></span></code></pre></div>
+<p>You can provide the name (without the file extension) of any bag in the <code>bag/</code> directory. The test will summarize the estimation error of your filter, but in order to diagnose problems, you’ll need to visualize what’s happening during the test:</p>
+<ul>
+<li>Add the <code>rviz:=true</code> option to pop open RViz in a configuration showing the reference solution’s estimate and your filter’s estimate evolving as the bag plays.</li>
+<li>Add <code>plot:=true</code> to produce a path plot for the test.</li>
+</ul>
+<p>It’s unlikely that your filter will produce exactly the same results as the reference solution, but the expected poses of both filters should be similar at all times. The terminal will print the median <span class="math inline">\(x, y, \theta\)</span> errors. At the end of the run on <code>full.bag</code> your median errors should all be less than 0.1.</p>
+<h2 id="running-on-the-car">Running on the Car</h2>
+<p>Follow the <a href="/courses/cse478/25wi/mushr_lab/">Lab Guide</a> to learn how to run teleop on the car and transfer your code to the car.</p>
+<p>In the MuSHR Lab, place your MuSHR car at the origin of the map. Start teleop, then in another terminal run the following command to specify the map.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rosrun map_server map_server <span class="va">$(</span><span class="ex">rospack</span> find cse478<span class="va">)</span>/maps/cse022.yaml</span></code></pre></div>
+<p>In yet another terminal, start the particle filter with the following command.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch localization particle_filter_sim.launch use_namespace:=true publish_tf:=true tf_prefix:=<span class="st">&quot;car/&quot;</span></span></code></pre></div>
+<p>On your workstation, start Rviz and visualize:</p>
+<ul>
+<li>The <code>/map</code> Map topic</li>
+<li>The <code>/pf/inferred_pose</code> Pose topic</li>
+<li>The <code>/scan</code> LaserScan topic</li>
+<li>The <code>/pf/particles</code> PoseArray topic</li>
+</ul>
+<details>
+<summary>
+How to visualize a topic in Rviz
+</summary>
+<ol type="1">
+<li><p>At the bottom of the left “Displays” pane, click the “Add” button.</p></li>
+<li><p>Click on the “by topic” tab on the popup that appears to see the list of currently active topics.</p></li>
+<li><p>Find the topic you want and double click it.</p></li>
+</ol>
+</details>
+<blockquote>
+<p>Note: make sure to start Rviz <strong>after</strong> running all the commands on the car and setting <code>ROS_MASTER_URI=http://&lt;ROBOT_IP&gt;:11311</code>, or setting your initial pose in the next step may not work. Also be sure to run Rviz on your workstation, as setting your initial pose may not work from within the VM.</p>
+</blockquote>
+<p>Click on the 2d Pose Estimate button, then click and drag to indicate your car’s initial position and orientation. The particle filter should start estimating your car’s position, and you should see the particles (small red arrows) initialize and then converge to the cars true position.</p>
+<p>Once your particle filter has started, you can use the joystick to teleoperate the MuSHR car around the lab space. You may need to re-tune your parameters to make them work better on the physical robot.</p>
+<p>With the particle filter running in the lab space, record a bagfile of your car driving around the lab space. The bag file should include the initial pose, inferred pose, particles, laser scan, and joystick controls and should be show your car driving for at least 25 feet. See <a href="http://wiki.ros.org/rosbag/Commandline#record">rosbag record</a> for more details on creating a bagfile. To keep the file size small, make sure to select the topics that you record carefully.</p>
+<h2 id="deliverables">Deliverables</h2>
+<p>Answer the following writeup questions in <code>localization/writeup/README.md</code>, including the figures that you generated above. All figures should be saved in the <code>localization/writeup</code> directory.</p>
+<ol type="1">
+<li>In the motion model plot, why are there more particles within a 10cm radius of the noise-free model prediction in Figure 2 than Figure 3?</li>
+<li>Include <code>mm1.png</code>, <code>mm2.png</code>, and <code>mm3.png</code>, your three intermediate motion model plots for control <span class="math inline">\((v, \delta, dt) = (3.0, 0.4, 0.5)\)</span>. Use them to explain your motion model parameter tuning process. For each plot, explain how it differs from Figure 3, and how you changed the parameters in response to those differences. The last plot should reflect your final tuned parameters.</li>
+<li>What are the drawbacks of the sensor model’s conditional independence assumption? How does this implementation mitigate those drawbacks? (Hint: we discussed this in class, but you can look at <code>LaserScanSensorModelROS</code> for the details.)</li>
+<li>Include <code>sm1.png</code>, <code>sm2.png</code>, and <code>sm3.png</code>, your three intermediate conditional probability plots for <span class="math inline">\(P(z_t^k|{z_t^k}^*)\)</span>. Document the sensor model parameters for each plot and explain the visual differences between them.</li>
+<li>Include your tuned sensor model likelihood plot for the robot positioned at state <span class="math inline">\((-9.6, 0.0, -2.5)\)</span> in the <code>maze_0</code> map.</li>
+<li>Include your particle filter path plot for your 60-second drive through CSE2.</li>
+<li>Include your bagfile recording of the particle filter running on the car in the writeup directory.</li>
+</ol>
+<p>To check your complete implementation, you can run all the tests above with <code>catkin test localization</code>.</p>
+<h3 id="submission">Submission</h3>
+<p>As with Project 1, you will use Git to submit your project (code and writeup).</p>
+<p>From your <code>mushr478</code> directory, add all of the writeup files and changed code files. Commit those changes, then create a Git tag called <code>submit-proj2</code>. Pushing the tag is how we’ll know when your project is ready for grading.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/mushr_ws/src/mushr478/</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git diff                             <span class="co"># See all your changes</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git add .                            <span class="co"># Add all the changed files</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git commit <span class="at">-m</span> <span class="st">&#39;Finished Project 2!&#39;</span>  <span class="co"># Or write a more descriptive commit message</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git push                             <span class="co"># Push changes to your GitLab repository</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git tag submit-proj2                 <span class="co"># Create a tag named submit-proj2</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git push <span class="at">--tags</span>                      <span class="co"># Push the submit-proj2 tag to GitLab</span></span></code></pre></div>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>For example, when updating states, the result should be stored in the original NumPy array object <code>states</code>, rather than returning a new array. You can still create and use intermediate NumPy arrays for your computations (although that does require allocating space for this new object and therefore more overhead, which we would ideally minimize). <a href="https://www.interviewcake.com/concept/python/in-place">This post</a> may also be helpful to you; while it discusses the built-in Python list as an example, the same ideas generally hold.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>The return value from <code>compute_changes</code> <span class="math inline">\(\Delta \hat{\mathbf{x}}_t\)</span> is a NumPy array with shape (M, 3). Call its columns <span class="math inline">\(\Delta \hat{x}_t, \Delta \hat{y}_t, \Delta \hat{\theta}_t\)</span>. Then, this notation <span class="math inline">\(\Delta \mathbf{x}_t \sim \mathcal{N}(\Delta \hat{\mathbf{x}}_t, \mathrm{diag}(\sigma_x^2, \sigma_y^2, \sigma_\theta^2))\)</span> is equivalent to sampling each component of the model noise independently, i.e. <span class="math inline">\(\Delta x_t \sim \mathcal{N}(\Delta \hat{x}_t, \sigma_x^2)\)</span>, <span class="math inline">\(\Delta y_t \sim \mathcal{N}(\Delta \hat{y}_t, \sigma_y^2)\)</span>, <span class="math inline">\(\Delta \theta_t \sim \mathcal{N}(\Delta \hat{\theta}_t, \sigma_\theta^2)\)</span>.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>You can see the available maps in <code>cse478/maps</code>.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4" role="doc-endnote"><p>You might find the explanation in this <a href="https://robotics.stackexchange.com/questions/7705/low-variance-resampling-algorithm-for-particle-filter/7706#7706">Robotics StackExchange post</a> useful.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5" role="doc-endnote"><p>You can open RViz and load the localization-specific configuration file. From RViz, navigate to “File &gt; Open Config” and choose <code>localization/config/localization.rviz</code>. Feel free to edit what topic you want to listen to / what color to visualize the messages and save your configuration for later.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+  </div>
+</div>
+
+
+<script type="text/javascript" src="/courses/cse478/25wi/js/index.js" defer></script>
+
+    </div>
+    <footer class="courseweb-footer">
+  <div class="float-left courseweb-cse-wordmark">
+    <img class="img-fluid"
+         src="/courses/cse478/25wi/img/cse-wordmark.png"
+         alt="Paul G. Allen School of Computer Science & Engineering" />
+  </div>
+  <div class="float-right">
+    <a href="//www.washington.edu/online/terms/">UW Site Use Agreement</a>
+  </div>    
+</footer>
+
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+
+  </body>
+</html>

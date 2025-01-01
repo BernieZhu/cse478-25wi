@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Projects on CSE 478</title>
+    <link>https://courses.cs.washington.edu/courses/cse478/25wi/projects/</link>
+    <description>Recent content in Projects on CSE 478</description>
+    <generator>Hugo -- gohugo.io</generator><atom:link href="https://courses.cs.washington.edu/courses/cse478/25wi/projects/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Final Project</title>
+      <link>https://courses.cs.washington.edu/courses/cse478/25wi/projects/final/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://courses.cs.washington.edu/courses/cse478/25wi/projects/final/</guid>
+      <description>Putting it all together on the MuSHR cars</description>
+    </item>
+    
+    <item>
+      <title>Project 1: Introduction</title>
+      <link>https://courses.cs.washington.edu/courses/cse478/25wi/projects/introduction/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://courses.cs.washington.edu/courses/cse478/25wi/projects/introduction/</guid>
+      <description>Get acquainted with the ROS ecosystem and the MuSHR virtual machine.</description>
+    </item>
+    
+    <item>
+      <title>Project 2: Localization</title>
+      <link>https://courses.cs.washington.edu/courses/cse478/25wi/projects/localization/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://courses.cs.washington.edu/courses/cse478/25wi/projects/localization/</guid>
+      <description>Localize your car by implementing the particle filtering algorithm.</description>
+    </item>
+    
+    <item>
+      <title>Project 3: Control</title>
+      <link>https://courses.cs.washington.edu/courses/cse478/25wi/projects/control/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://courses.cs.washington.edu/courses/cse478/25wi/projects/control/</guid>
+      <description>Implement feedback controllers to follow pre-planned paths.</description>
+    </item>
+    
+    <item>
+      <title>Project 4: Planning</title>
+      <link>https://courses.cs.washington.edu/courses/cse478/25wi/projects/planning/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://courses.cs.washington.edu/courses/cse478/25wi/projects/planning/</guid>
+      <description>Implement Lazy A* and postprocessing to plan new paths.</description>
+    </item>
+    
+  </channel>
+</rss>

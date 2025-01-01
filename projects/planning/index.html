@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <meta name="generator" content="Hugo 0.82.0" />
+
+  <title>CSE 478 | Project 4: Planning</title>
+
+  
+  <link rel="stylesheet" href="/courses/cse478/25wi/css/style.min.ecaf9ba3e25bf0e4c0d3a033f865796bf2281f8c58839e7f2290407c7c779834.css">
+  </head>
+
+  <body><header class="courseweb-header">
+  <nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark">
+    <a class="navbar-brand navbar-brand-filled bg-uwpurple d-none d-sm-inline" href="/courses/cse478/25wi/">CSE 478</a>
+    <a class="navbar-brand d-sm-none" href="/courses/cse478/25wi/">CSE 478</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    
+    <div id="nav" class="collapse navbar-collapse">
+      <ul class="navbar-nav mr-auto">
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/courses/cse478/25wi/schedule/">Schedule</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link active" href="/courses/cse478/25wi/projects/">Projects</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/courses/cse478/25wi/mushr_lab/">Lab Guide</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/courses/cse478/25wi/discussion/">Discussion</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="https://edstem.org/us/courses/50038/discussion/">Ed</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="https://canvas.uw.edu/courses/1694425">Canvas</a>
+        </li>
+        
+        
+        
+        
+        
+      </ul>
+    </div>
+    <span class="navbar-brand navbar-brand-filled bg-uwpurple d-none d-md-inline">25wi</span>
+  </nav>
+</header>
+
+    <div class="container">
+      
+<div class="row">
+  <div class="col-12">
+    <h1>Project 4: Planning</h1>
+
+    
+    
+    
+    <img src="/courses/cse478/25wi/projects/planning/plan.svg" class="img-fluid w-500px py-4"  alt="A MuSHR car considers a tree of possible actions to navigate through a hallway environment."/>
+    
+    
+
+    <h2 id="overview">Overview</h2>
+<p>In this project, you will implement a sampling-based motion planning system. You will construct roadmaps for different environments and planning problems. You will implement the Lazy A* algorithm to search this graph efficiently, and implement a postprocessor to locally improve the path on the graph. By the end of this project, you will have an integrated system that combines all the components you’ve previously developed in this course!</p>
+<p>Please complete this assignment with your group from the previous assignment.</p>
+<p>The relevant lectures are:</p>
+<ul>
+<li>Introduction to Planning</li>
+<li>Heuristic Search</li>
+<li>Sampling-Based Motion Planning</li>
+<li>Lazy Search, Planning for Vehicles</li>
+</ul>
+<h2 id="getting-started">Getting Started</h2>
+<p>The MuSHR dependencies are the same as when Project 3 was released. To pull Project 4 from our <a href="https://gitlab.cs.washington.edu/cse478/22wi/mushr478">starter repository</a>, follow these instructions (assuming you’ve already set the <code>upstream</code> remote previously).</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/mushr_ws/src/mushr478</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git pull upstream main</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ..</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catkin build</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source ~/mushr_ws/devel/setup.bash</span></code></pre></div>
+<p>If the build succeeds and you can run <code>roscd planning</code>, you’re ready to start! Please post on Ed if you have issues at this point.</p>
+<h2 id="code-overview">Code Overview</h2>
+<p>The first step of motion planning is to define the problem space (<code>src/planning/problems.py</code>). This project only considers <code>PlanarProblem</code>s like <code>R2Problem</code> and <code>SE2Problem</code>. The <code>R2Problem</code> configuration space only considers x- and y- position, while the <code>SE2Problem</code> also includes orientation. The <code>PlanarProblem</code> class implements shared functionality, such as collision-checking. The specific problems implement their own heuristic and steering function to connect two configurations. After defining these classes, the rest of your planning algorithm can abstract away these particulars of the configuration space. (To solve a new type of problem, just implement a corresponding problem class.)</p>
+<p>The next step of sampling-based motion planning is to construct a roadmap by sampling configurations. Sampler classes include <code>HaltonSampler</code>, <code>LatticeSampler</code>, and <code>RandomSampler</code> (<code>src/planning/samplers.py</code>). You will fill in <code>HaltonSampler</code> to generate samples using the <a href="https://observablehq.com/@jrus/halton">Halton pseudorandom sampler</a>. Then, you will complete the <code>Roadmap</code> class (<code>src/planning/roadmap.py</code>) to finish constructing roadmaps. To search the roadmap, you will implement (Lazy) A* and path shortcutting (<code>src/planning/search.py</code>).</p>
+<p>The <code>Roadmap</code> class contains many useful methods and fields. Three fields are of particular importance: <code>graph</code>, <code>vertices</code>, and <code>weighted_edges</code>. <code>Roadmap.graph</code> is a <a href="https://networkx.org/">NetworkX</a> graph, either <a href="https://networkx.org/documentation/stable/reference/classes/graph.html">undirected</a> or <a href="https://networkx.org/documentation/stable/reference/classes/digraph.html">directed</a> depending on the problem type.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> The starter code already handles interacting with this object. Nodes in the NetworkX graph have integer labels. These are indices into <code>Roadmap.vertices</code>, a NumPy array of configurations corresponding to each node in the graph. <code>Roadmap.weighted_edges</code> is a NumPy array of edges and edge weights; each row <code>(u, v, w)</code> describes an edge where <code>u</code> and <code>v</code> are the same integer-labeled nodes and <code>w</code> is the length of the edge between them.</p>
+<p>The <code>PlannerROS</code> class in <code>src/control/planner_ros.py</code> provides a ROS interface to your planning algorithms. It adds the current robot state (estimated with your particle filter from Project 2) and the desired goal to the roadmap as the start and goal nodes. Then, it invokes Lazy A* and shortcutting to compute a path. Finally, this path is sent to a path tracking controller (your MPC algorithm from Project 3).</p>
+<h2 id="q1.-roadmap-construction">Q1. Roadmap Construction</h2>
+<p><strong>Q1.1</strong>: Complete the <code>HaltonSampler</code> class in <code>samplers.py</code>. The <code>HaltonSampler</code> maintains a separate generator (with a separate <code>base</code>) for each dimension of the configuration space. The <code>compute_sample</code> method returns a deterministic sample between 0 and 1 for a given <code>index</code> and <code>base</code>, which is later scaled by the <code>sample</code> method to match the extents of the configuration space. This <a href="https://observablehq.com/@jrus/halton">blog post</a> on Halton sequences might be a useful reference for implementing <code>compute_sample</code>.</p>
+<p>The extents describe the lower and upper bounds of the space being sampled. Your implementation of <code>sample</code> should scale them linearly: a 0 returned by <code>compute_sample</code> corresponds to the lower bound, while a 1 corresponds to the upper bound.</p>
+<p>After completing Q1.1, expect to pass all the test suites in <code>python3 test/samplers.py</code>.</p>
+<p>You can visualize the sampled configurations with the following command. Your plot should match the reference plot below.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> python3 scripts/roadmap <span class="at">--num-vertices</span> 100 <span class="at">--lazy</span></span></code></pre></div>
+<figure class="figure mw-100 w-500px">
+    <a id="fig-halton-empty">
+    <img src="r2_empty.png"
+         alt="Figure 1: Halton samples"
+         class="figure-img img-fluid"
+    /> </a><figcaption class="figure-caption">
+            <p>Figure 1: Halton samples</p>
+        </figcaption>
+</figure>
+
+<p><strong>Q1.2</strong>: Implement <code>PlanarProblem.check_state_validity</code> in <code>problems.py</code>. Remember to vectorize! This method will be used to collision-check batches of many states (states that have been sampled as potential vertices or interpolated states along an edge), so it needs to be efficient. Your implementation should ensure that configurations are within the extents of the problem space (<code>PlanarProblem.extents</code>), and that the x and y components are collision-free (i.e. that they lie completely within <code>PlanarProblem.permissible_region</code>). For simplicity, we will assume that the robot is a point, so you only need to check one entry of the permissible region for each state.</p>
+<p>You can verify your implementation on the provided test suites by running <code>python3 test/problems.py</code>.</p>
+<p>The following command will now sample until there are 100 collision-free vertices. Your plot should match the reference plot below.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> python3 scripts/roadmap <span class="at">--text-map</span> test/share/map1.txt <span class="at">--num-vertices</span> 100 <span class="at">--lazy</span></span></code></pre></div>
+<figure class="figure mw-100 w-500px">
+    <a id="fig-halton-map1">
+    <img src="r2_map1.png"
+         alt="Figure 2: Halton samples on map1.txt"
+         class="figure-img img-fluid"
+    /> </a><figcaption class="figure-caption">
+            <p>Figure 2: Halton samples on <code>map1.txt</code></p>
+        </figcaption>
+</figure>
+
+<p><strong>Q1.3</strong>: Implement <code>Roadmap.check_weighted_edges_validity</code> in <code>roadmap.py</code>. This method is called by the <code>Roadmap</code> constructor to prevent edges in collision from being added to the graph.</p>
+<p>You can verify your implementation on the provided test suite by running <code>python3 test/roadmap.py</code>.</p>
+<p>The following command samples 25 collision-free vertices and collision-checks edges that have length less than the connection radius of 3. Your plot should match the reference plot below.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> python3 scripts/roadmap <span class="at">-m</span> test/share/map1.txt <span class="at">-n</span> 25 <span class="at">-r</span> 3.0 <span class="at">--show-edges</span></span></code></pre></div>
+<figure class="figure mw-100 w-500px">
+    <a id="fig-halton-map1-graph">
+    <img src="r2_map1_edges.png"
+         alt="Figure 3: Halton graph on map1.txt with 25 vertices and connection radius of 3."
+         class="figure-img img-fluid"
+    /> </a><figcaption class="figure-caption">
+            <p>Figure 3: Halton graph on <code>map1.txt</code> with 25 vertices and connection radius of 3.</p>
+        </figcaption>
+</figure>
+
+<h2 id="q2.-searching-the-roadmap-a">Q2. Searching the Roadmap: A*</h2>
+<p>The A* algorithm expands nodes in order of their f-value <span class="math inline">\(f(n) = g(n) + h(n)\)</span>, where <span class="math inline">\(g(n)\)</span> is the estimated cost-to-come to the node <span class="math inline">\(n\)</span> and <span class="math inline">\(h(n)\)</span> is the estimated cost-to-go from the node <span class="math inline">\(n\)</span> to the goal.</p>
+<p><strong>Q2.1</strong>: Implement the main A* logic in <code>search.py</code>. For each neighbor, compute the cost-to-come via the current node (cost-to-come for the current node, plus the length of the edge to the neighbor). Insert a <code>QueueEntry</code> with this information into the priority queue. Be sure to compute the f-value of the node (cost-to-come plus heuristic) so the priority queue is sorted correctly. Then, implement <code>extract_path</code> to follow the parent pointers from the goal to the start; this function is called by <code>astar</code> after the goal has been expanded to finally return the sequence of nodes.</p>
+<p>You can verify your implementation on the provided test suites by running <code>python3 test/astar.py</code>. Your implementation should pass the <code>test_astar_r2</code> and <code>test_astar_se2</code> suites.</p>
+<p>You should now be able to run an A* planner from the start to the goal! The following command specifies that it is an <code>R2Problem</code>, planning from the start of (1, 1) to the goal of (7, 8). Your plot should match the reference plot below.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> python3 scripts/run_search <span class="at">-m</span> test/share/map1.txt <span class="at">-n</span> 25 <span class="at">-r</span> 3.0 <span class="at">--show-edges</span> r2 <span class="at">-s</span> 1 1 <span class="at">-g</span> 7 8</span></code></pre></div>
+<figure class="figure mw-100 w-500px">
+    <a id="fig-halton-map1-path">
+    <img src="r2_map1_astar_path.png"
+         alt="Figure 4: A* path in blue on map1.txt, from (1, 1) in green to (7, 8) in red."
+         class="figure-img img-fluid"
+    /> </a><figcaption class="figure-caption">
+            <p>Figure 4: A* path in blue on <code>map1.txt</code>, from (1, 1) in green to (7, 8) in red.</p>
+        </figcaption>
+</figure>
+
+<div class="deliverable">
+<blockquote>
+<p>Compute the shortest path on <code>map2.txt</code> between (252, 115) and (350, 350) with the following command: <code>python3 scripts/run_search -m test/share/map2.txt -n 600 -r 100 r2 -s 252 115 -g 350 350</code>. Include the shortest path figure in your writeup.</p>
+</blockquote>
+</div>
+<div class="deliverable">
+<blockquote>
+<p>Holding the number of vertices constant at 600, decrease the connection radius from 100 until the planner fails to find a solution on <code>map2.txt</code>. Now, double the connection radius to 200. For each radius, report the radius, path length, and planning time. Explain any variation.</p>
+</blockquote>
+</div>
+<div class="deliverable">
+<blockquote>
+<p>Holding the connection radius constant at 100, decrease the number of vertices from 600 until the planner fails to find a solution on <code>map2.txt</code>. Now, double the number of vertices to 1200. For each number of vertices, report the number, path length, and planning time. Explain any variation.</p>
+</blockquote>
+</div>
+<p>One of the main computational bottlenecks in motion planning algorithms is checking whether an edge is collision-free. This requires checking collisions between the robot and the environment for every intermediate state along an edge. Rather than checking all edges when constructing the roadmap, Lazy A* only collision-checks an edge when attempting to choose the edge during search.</p>
+<p><strong>Q2.2</strong> Implement Lazy A* in <code>search.py</code>. The <code>Roadmap</code> class decides whether to collision-check edges on construction based on <code>Roadmap.lazy</code>. You will use this same field to decide when edges need to be lazily evaluated by A*. When a new node is expanded, the edge from its parent to that node must be collision-checked (with <code>Roadmap.check_edge_validity</code>) to determine whether search can continue. If it is in collision, the entry cannot be used and is discarded. If it is collision-free, the algorithm can proceed as before.</p>
+<p>Your implementation should pass the final <code>test_lazy_astar</code> test suite in <code>test/astar.py</code>.</p>
+<p>You should now be able to run Lazy A*! Your plot should match the reference plot below. Note that some edges are in collision.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> python3 scripts/run_search <span class="at">-m</span> test/share/map1.txt <span class="at">-n</span> 25 <span class="at">-r</span> 3.0 <span class="at">--lazy</span> <span class="at">--show-edges</span> r2 <span class="at">-s</span> 1 1 <span class="at">-g</span> 7 8</span></code></pre></div>
+<figure class="figure mw-100 w-500px">
+    <a id="fig-halton-map1-path">
+    <img src="r2_map1_lazy_astar_path.png"
+         alt="Figure 5: Lazy A* path in blue on map1.txt, from (1, 1) in green to (7, 8) in red."
+         class="figure-img img-fluid"
+    /> </a><figcaption class="figure-caption">
+            <p>Figure 5: Lazy A* path in blue on <code>map1.txt</code>, from (1, 1) in green to (7, 8) in red.</p>
+        </figcaption>
+</figure>
+
+<div class="deliverable">
+<blockquote>
+<p>For your choice of number of vertices and connection radius, compute the shortest path on <code>map2.txt</code> with A* and with Lazy A*. Report the path length, planning time, and edges evaluated, and explain any variation. <code>python3 scripts/run_search -m test/share/map2.txt -n &lt;N&gt; -r &lt;R&gt; [--lazy] r2 -s 252 115 -g 350 350</code>.</p>
+</blockquote>
+</div>
+<p><strong>Q2.3</strong> Implement path shortcutting in <code>search.py</code>. A* returns the shortest path on the graph, which is not necessarily the shortest path in the environment because not all vertices are directly connected by edges. Randomly select two indices to try and connect. Be sure to verify that an edge connecting the two vertices would be collision-free, and that connecting the two indices would actually be shorter.</p>
+<p>You can verify your implementation on the provided test suite by running <code>python3 test/shortcut.py</code>.</p>
+<p>Your plot for the following command may not match the reference plot exactly. Note that the shortcut uses edges that did not exist in the graph.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> python3 scripts/run_search <span class="at">-m</span> test/share/map1.txt <span class="at">-n</span> 25 <span class="at">-r</span> 3.0 <span class="at">--lazy</span> <span class="at">--shortcut</span> <span class="at">--show-edges</span> r2 <span class="at">-s</span> 1 1 <span class="at">-g</span> 7 8</span></code></pre></div>
+<figure class="figure mw-100 w-500px">
+    <a id="fig-halton-map1-shortcut">
+    <img src="r2_map1_shortcut_path.png"
+         alt="Figure 6: Lazy A* path with shortcut postprocessing on map1.txt."
+         class="figure-img img-fluid"
+    /> </a><figcaption class="figure-caption">
+            <p>Figure 6: Lazy A* path with shortcut postprocessing on <code>map1.txt</code>.</p>
+        </figcaption>
+</figure>
+
+<div class="deliverable">
+<blockquote>
+<p>Compare the time spent on planning and shortcutting on <code>map1.txt</code>. Describe qualitatively how the paths differ.</p>
+</blockquote>
+</div>
+<h2 id="q3.-mushr-planning">Q3. MuSHR Planning</h2>
+<p>So far, we’ve been solving <code>R2Problem</code>s. But since the MuSHR cars have an orientation, the problems we need to solve are <code>SE2Problem</code>s. The <a href="https://en.wikipedia.org/wiki/Dubins_path">Dubins path</a> connects two configurations, with a maximum specified curvature<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>. Since the Dubins path is directed, the graph will be directed. As a result, more vertices are generally needed for the graph to be connected.</p>
+<p>Your plot should match the reference plot below. Note that some edges are in collision.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> python3 scripts/run_search <span class="at">-m</span> test/share/map1.txt <span class="at">-n</span> 40 <span class="at">-r</span> 4 <span class="at">--lazy</span> <span class="at">--show-edges</span> se2 <span class="at">-s</span> 1 1 0 <span class="at">-g</span> 7 8 45 <span class="at">-c</span> 3</span></code></pre></div>
+<figure class="figure mw-100 w-500px">
+    <a id="fig-halton-map1-path">
+    <img src="se2_map1_lazy_astar_path.png"
+         alt="Figure 7: Lazy A* path in blue on map1.txt, from (1, 1, 0°) to (7, 8, 45°)."
+         class="figure-img img-fluid"
+    /> </a><figcaption class="figure-caption">
+            <p>Figure 7: Lazy A* path in blue on <code>map1.txt</code>, from (1, 1, 0°) to (7, 8, 45°).</p>
+        </figcaption>
+</figure>
+
+<p>Shortcutting should reduce the path length further.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> python3 scripts/run_search <span class="at">-m</span> test/share/map1.txt <span class="at">-n</span> 40 <span class="at">-r</span> 4 <span class="at">--lazy</span> <span class="at">--shortcut</span> <span class="at">--show-edges</span> se2 <span class="at">-s</span> 1 1 0 <span class="at">-g</span> 7 8 45 <span class="at">-c</span> 3</span></code></pre></div>
+<figure class="figure mw-100 w-500px">
+    <a id="fig-halton-map1-path">
+    <img src="se2_map1_shortcut_path.png"
+         alt="Figure 8: Lazy A* path with shortcut postprocessing on map1.txt."
+         class="figure-img img-fluid"
+    /> </a><figcaption class="figure-caption">
+            <p>Figure 8: Lazy A* path with shortcut postprocessing on <code>map1.txt</code>.</p>
+        </figcaption>
+</figure>
+
+<div class="deliverable">
+<blockquote>
+<p>Holding the number of vertices and connection radius constant, vary the curvature from its initial value of 3 to 4.5, 9, and 15. Include plots of the computed paths for each curvature on <code>map1.txt</code>. Describe qualitatively how the paths differ, and quantitatively compare the path lengths. <code>python3 scripts/run_search -m test/share/map1.txt -n 40 -r 4 --lazy --show-edges se2 -s 1 1 0 -g 7 8 45 -c &lt;C&gt;</code></p>
+</blockquote>
+</div>
+<h2 id="q4.-putting-it-all-together">Q4. Putting It All Together</h2>
+<p>First, we’ll need to create roadmaps for our test environments. The default parameters in the launch files create a roadmap with 200 vertices, a connection radius of 10 meters, and a curvature of 1 meter<sup>-1</sup>.</p>
+<p><code>planner_sim.launch</code> will start your particle filter, controller, planner (including roadmap generation), and RViz. The roadmap’s vertices will be rendered in RViz as scattered arrows. Edges take longer to visualize, but will eventually appear as curves between them. You will not be able to plan until the roadmap has been generated (i.e., until the vertices appear in RViz). Creating a roadmap for the <code>maze_0</code> map with the following parameters takes about 20 seconds.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch planning planner_sim.launch map:=<span class="st">&#39;$(find cse478)/maps/maze_0.yaml&#39;</span> num_vertices:=1000 connection_radius:=10 curvature:=1</span></code></pre></div>
+<p>To start planning to a new goal, use the “2D Nav Goal” tool in the RViz toolbar. Similar to the “2D Pose Estimate” tool, click on the position you want to specify and drag in the desired direction. Once the plan is generated, you should see the path visualized as you did for the pre-programmed paths in Project 3. The planner and controller use the particle filter estimate as the robot’s current state to plan/control from.</p>
+<p>Your planner may sometimes fail to find a path. That may be expected if there aren’t enough vertices in the graph along the shortest path. In that case, just set a new goal (or set nearby goals, which can be connected directly to the start).</p>
+<figure class="figure mw-100 w-500px">
+    <a id="fig-rviz-maze0">
+    <img src="rviz_maze_0.png"
+         alt="Figure 9: RViz window for maze_0."
+         class="figure-img img-fluid"
+    /> </a><figcaption class="figure-caption">
+            <p>Figure 9: RViz window for <code>maze_0</code>.</p>
+        </figcaption>
+</figure>
+
+<div class="deliverable">
+<blockquote>
+<p>Include an RViz screenshot of the MuSHR car tracking a path in <code>maze_0</code>, as well as the parameters you used to construct the roadmap.</p>
+</blockquote>
+</div>
+<h3 id="simulated-driving-in-the-gates-center">Simulated Driving in the Gates Center</h3>
+<p>As with <code>maze_0</code>, our machines take about 20 seconds to construct a roadmap for <code>cse2_2</code>. Your MuSHR car should be able to plan to faraway configurations in this much larger map.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch planning planner_sim.launch map:=<span class="st">&#39;$(find cse478)/maps/cse2_2.yaml&#39;</span> num_vertices:=1500 connection_radius:=10 curvature:=1 initial_x:=16 initial_y:=28</span></code></pre></div>
+<p>You may want to continue to tune the roadmap parameters (number of vertices, connection radius, and curvature) beyond our initial suggestions here. You may also want to retune your MPC controller or particle filter.</p>
+<details>
+<summary>
+Caching Roadmaps
+</summary>
+<p>For roadmaps that take more time to generate, <code>make_roadmap.launch</code> avoids starting all the other components of your MuSHR system. The constructed roadmap is cached, so you can run <code>planner_sim.launch</code> afterwards without having to wait (with the <code>cache_roadmap</code> flag set to <code>true</code>).</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch planning make_roadmap.launch map:=<span class="st">&#39;$(find cse478)/maps/cse2_2.yaml&#39;</span> num_vertices:=5000 connection_radius:=10 curvature:=1 initial_x:=16 initial_y:=28</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch planning planner_sim.launch map:=<span class="st">&#39;$(find cse478)/maps/cse2_2.yaml&#39;</span> num_vertices:=5000 connection_radius:=10 curvature:=1 initial_x:=16 initial_y:=28 cache_roadmap:=true</span></code></pre></div>
+<p>These roadmaps are cached under <code>~/.ros/graph_cache</code> with: the name of the map, the type of problem (<code>r2</code> or <code>se2</code>), the name of the sampler, the number of vertices, the connection radius, and the curvature (if applicable). If you want to regenerate that roadmap, just delete the corresponding file.</p>
+</details>
+<div class="deliverable">
+<blockquote>
+<p>Include an RViz screenshot of the MuSHR car tracking a path in <code>cse2_2</code>, as well as the parameters you used to construct the roadmap.</p>
+</blockquote>
+</div>
+<h2 id="running-on-the-car-and-demo">Running on the car and Demo</h2>
+<p>First, pull the starter repo to make sure your repo is up-to-date.</p>
+<p>In the MuSHR Lab, place your MuSHR car in the open space. Start teleop, then in another terminal run the following command to specify the map.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rosrun map_server map_server <span class="va">$(</span><span class="ex">rospack</span> find cse478<span class="va">)</span>/maps/cse022.yaml</span></code></pre></div>
+<p>In yet another terminal, start the particle filter with the following command.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch localization particle_filter_sim.launch use_namespace:=true publish_tf:=true tf_prefix:=<span class="st">&quot;car/&quot;</span></span></code></pre></div>
+<p>Run a controller (PID/MPC), e.g., PID in another terminal.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch control controller.launch type:=pid tf_prefix:=<span class="st">&quot;car/&quot;</span></span></code></pre></div>
+<p>Run planning in another terminal.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch planning planner_car.launch num_vertices:=1000 connection_radius:=20 curvature:=1</span></code></pre></div>
+<p>Wait for the roadmap construction to finish.</p>
+<p>Launch Rviz. Add the following topics:</p>
+<ul>
+<li>The /map Map topic</li>
+<li>The /pf/inferred_pose Pose topic</li>
+<li>The /scan LaserScan topic</li>
+<li>The /pf/particles PoseArray topic</li>
+<li>The /car/controller/path/poses PoseArray topic. Set the color to blue.</li>
+<li>The /car/controller/real_path/poses PoseArray topic. Set the color to green.</li>
+<li>The /car/planner/edges Marker topic.</li>
+<li>The /car/planner/vertices PoseArray topic.</li>
+</ul>
+<p>Press and hold the R1 bumper of the controller to put the car in autonomous mode. After setting the above topics in Rviz, set the initial pose using the <strong>2d Pose Estimate</strong> button. Similarly, use the <strong>2d Nav Goal</strong> button to set the goal pose on the map. The car will start moving towards the destination as soon as the path planning is finished.</p>
+<h2 id="q5.-extra-credit-rapidly-exploring-random-tree-rrt">Q5. Extra Credit: Rapidly Exploring Random Tree (RRT)</h2>
+<p>The RRT algorithm builds a tree, randomly samples nodes, and expands the tree towards these until it reaches the goal.</p>
+<p><strong>Q5.1</strong>: Implement the RRT logic in <code>rrt.py</code>. Initialize the tree <code>RRTTree</code> with your starting node (<span class="math inline">\(x_{init}\)</span>). Draw a random sample (<span class="math inline">\(x_{rand}\)</span>) and get the nearest neighbor in you tree (<span class="math inline">\(x_{near}\)</span>). Expand the tree towards the new sample with step size <span class="math inline">\(\eta\)</span> and validate both the new node (<span class="math inline">\(x_{new}\)</span>) and edge. If valid, add both to your tree. Keep expanding the tree and discarding invalid expansions for <span class="math inline">\(max\_iter\)</span> or until the goal criteria is met. You might find the following functions useful: <code>sample</code>, <code>extend</code>, <code>rm.problem.check_state_validity</code>, <code>rm.problem.check_edge_validity</code>, <code>rm.problem.goal_criterion</code>, <code>tree.AddVertex</code>, <code>tree.AddEdge</code>, <code>tree.GetNearestVertex</code>. Note that plain RRT does not have a notion of cost and you can set <span class="math inline">\(cost=0\)</span>. Our code computes the cost after the search terminates.</p>
+<figure class="figure mw-100 w-500px">
+    <a id="fig-rrt-expand">
+    <img src="rrt_expand.png"
+         alt="Figure 10: RRT expansion"
+         class="figure-img img-fluid"
+    /> </a><figcaption class="figure-caption">
+            <p>Figure 10: RRT expansion</p>
+        </figcaption>
+</figure>
+
+<p>You can verify your implementation on the provided test suites by running <code>python3 test/rrt.py</code>. Your implementation should pass the <code>test_rrt_r2</code> and <code>test_rrt_se2</code> suites.</p>
+<p>You should now be able to run an RRT planner from the start to the goal! The following command specifies that it is an <code>R2Problem</code>, planning from the start of (1, 1) to the goal of (8, 7). Due to the stochastic nature of the RRT sampling, your plot might look slighlty different from the reference plot below depending on your implementation.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> python3 scripts/run_search <span class="at">-m</span> test/share/map1.txt <span class="at">--algorithm</span> rrt <span class="at">-x</span> 1000 <span class="at">-e</span> 0.5 <span class="at">-b</span> 0.05 <span class="at">--show-edges</span> r2 <span class="at">-s</span> 1 1 <span class="at">-g</span> 8 7</span></code></pre></div>
+<figure class="figure mw-100 w-500px">
+    <a id="fig-rrt-r2">
+    <img src="r2_rrt.png"
+         alt="Figure 4: RRT path in blue on map1.txt, from (1, 1) in green to (8,7) in red."
+         class="figure-img img-fluid"
+    /> </a><figcaption class="figure-caption">
+            <p>Figure 4: RRT path in blue on <code>map1.txt</code>, from (1, 1) in green to (8,7) in red.</p>
+        </figcaption>
+</figure>
+
+<div class="deliverable">
+<blockquote>
+<p>Compute the path for the <code>SEProblem</code> on <code>map1.txt</code> between (1, 1, 0°) and (7, 8, 45°) with curvature 3 with the following command: <code>python3 scripts/run_search -m test/share/map1.txt --algorithm rrt -x 1000 -e 0.5 -b 0.05 --show-edges se2 -s 1 1 0 -g 7 8 45 -c 3</code>. Include the figure in your writeup.</p>
+</blockquote>
+</div>
+<p><strong>Q5.2</strong>: Parameter <span class="math inline">\(\eta\)</span> defines how far the tree expands to the sampled nodes. Additionally, the goal node can be sampled with probability <span class="math inline">\(bias\)</span>. For this exercise we start with <span class="math inline">\(\eta=0.5\)</span> and <span class="math inline">\(bias=0.05\)</span>. Try running RRT for different parameter values and provide an intuition on how those parameters affect the convergence and the solution. If no solution is found, the algorithm returns an empty array. Try to increase <span class="math inline">\(max\_iter\)</span> and be more conservative when tuning the parameters.</p>
+<h2 id="deliverables">Deliverables</h2>
+<p>Answer the following writeup questions in <code>planning/writeup/README.md</code>. All figures should be saved in the <code>planning/writeup</code> directory.</p>
+<ol type="1">
+<li><p>Include the A* shortest path figure on <code>map2.txt</code> between (252, 115) and (350, 350), with 600 vertices and a connection radius of 100.</p></li>
+<li><p>Holding the number of vertices constant at 600, vary the connection radius when computing the shortest path on <code>map2.txt</code>. For each experiment, report the radius, path length, and planning time. Explain any variation. (You may find a table useful for summarizing your findings.)</p></li>
+<li><p>Holding the connection radius constant at 100, vary the number of vertices when computing the shortest path on <code>map2.txt</code>. For each experiment, report the number of vertices, path length, and planning time. Explain any variation. (You may find a table useful for summarizing your findings.)</p></li>
+<li><p>Use the previous experiments to choose a number of vertices and connection radius for <code>map2.txt</code>. Compute the shortest path with A* and Lazy A*. Report the path length, planning time, and edges evaluated. Explain any variation.</p></li>
+<li><p>Compare the time spent on planning and shortcutting on <code>map1.txt</code>. Describe qualitatively how the paths differ.</p></li>
+<li><p>Holding the number of vertices and connection radius constant at 40 and 4 respectively, vary the curvature at 3, 4.5, 9, and 15 when computing the shortest path on <code>map1.txt</code>. Include plots of the computed paths for each curvature. Describe qualitatively how the paths differ, and quantitatively compare the path lengths.</p></li>
+<li><p>The minimum and maximum steering angles used by MPC are -0.34 and 0.34 radians respectively. Knowing that the distance between the axles is 0.33 meters, what is the maximum curvature for the MuSHR car? (Hint: think about the kinematic car model.)</p></li>
+<li><p>Include an RViz screenshot of the MuSHR car tracking a path in <code>maze_0</code>, as well as the parameters you used to construct the roadmap.</p></li>
+<li><p>Include an RViz screenshot of the MuSHR car tracking a path in <code>cse2_2</code>, as well as the parameters you used to construct the roadmap.</p></li>
+<li><p>If you retuned either the particle filter or MPC, describe why you thought it was necessary and how you chose the new parameters.</p></li>
+<li><p><strong>Demo:</strong> Run the planner with a controller of your choice and particle filter in <strong>real</strong>.</p></li>
+</ol>
+<h2 id="submission">Submission</h2>
+<p>As with previous projects, you will use Git to submit your project (code and writeup).</p>
+<p>From your <code>mushr478</code> directory, add all of the writeup files and changed code files. Commit those changes, then create a Git tag called <code>submit-proj4</code>. Pushing the tag is how we’ll know when your project is ready for grading.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/mushr_ws/src/mushr478/</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git diff                             <span class="co"># See all your changes</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git add .                            <span class="co"># Add all the changed files</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git commit <span class="at">-m</span> <span class="st">&#39;Finished Project 4!&#39;</span>  <span class="co"># Or write a more descriptive commit message</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git push                             <span class="co"># Push changes to your GitLab repository</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git tag submit-proj4                 <span class="co"># Create a tag named submit-proj4</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git push <span class="at">--tags</span>                      <span class="co"># Push the submit-proj4 tag to GitLab</span></span></code></pre></div>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p><code>SE2Problem</code>s require directed edges.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>The curvature is the inverse of the arc radius, so it has units of meters<sup>-1</sup>. Therefore, a maximum curvature corresponds to a minimum turning radius.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+  </div>
+</div>
+
+
+<script type="text/javascript" src="/courses/cse478/25wi/js/index.js" defer></script>
+
+    </div>
+    <footer class="courseweb-footer">
+  <div class="float-left courseweb-cse-wordmark">
+    <img class="img-fluid"
+         src="/courses/cse478/25wi/img/cse-wordmark.png"
+         alt="Paul G. Allen School of Computer Science & Engineering" />
+  </div>
+  <div class="float-right">
+    <a href="//www.washington.edu/online/terms/">UW Site Use Agreement</a>
+  </div>    
+</footer>
+
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+
+  </body>
+</html>

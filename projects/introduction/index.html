@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <meta name="generator" content="Hugo 0.82.0" />
+
+  <title>CSE 478 | Project 1: Introduction</title>
+
+  
+  <link rel="stylesheet" href="/courses/cse478/25wi/css/style.min.ecaf9ba3e25bf0e4c0d3a033f865796bf2281f8c58839e7f2290407c7c779834.css">
+  </head>
+
+  <body><header class="courseweb-header">
+  <nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark">
+    <a class="navbar-brand navbar-brand-filled bg-uwpurple d-none d-sm-inline" href="/courses/cse478/25wi/">CSE 478</a>
+    <a class="navbar-brand d-sm-none" href="/courses/cse478/25wi/">CSE 478</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    
+    <div id="nav" class="collapse navbar-collapse">
+      <ul class="navbar-nav mr-auto">
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/courses/cse478/25wi/schedule/">Schedule</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link active" href="/courses/cse478/25wi/projects/">Projects</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/courses/cse478/25wi/mushr_lab/">Lab Guide</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/courses/cse478/25wi/discussion/">Discussion</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="https://edstem.org/us/courses/50038/discussion/">Ed</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="https://canvas.uw.edu/courses/1694425">Canvas</a>
+        </li>
+        
+        
+        
+        
+        
+      </ul>
+    </div>
+    <span class="navbar-brand navbar-brand-filled bg-uwpurple d-none d-md-inline">25wi</span>
+  </nav>
+</header>
+
+    <div class="container">
+      
+<div class="row">
+  <div class="col-12">
+    <h1>Project 1: Introduction</h1>
+
+    
+    
+    
+    <img src="/courses/cse478/25wi/projects/introduction/single-car.jpg" class="img-fluid w-500px py-4"  alt="Version 3 of the MuSHR car."/>
+    
+    
+
+    <h2 id="overview">Overview</h2>
+<p>The goal of this assignment is to help you become acquainted with the MuSHR platform and other software you’ll use in the programming projects.</p>
+<p>First, you’ll set up the CSE 478 virtual machine environment and learn about <a href="http://wiki.ros.org/ROS/Tutorials">ROS</a> (including some brief refreshers on using the terminal). Then, you’ll write Python code to interface with ROS, and learn to use the <a href="https://numpy.org/doc/stable/user/quickstart.html">NumPy</a> library to write computationally-efficient code. At the end of this document, we’ve also provided some <a href="#helpful-tips">useful commands and links</a> for you to learn more.</p>
+<p>This project should be completed in your assigned groups. Please contact course staff if you have not been assigned a group or do not have access to your group’s gitlab repository.</p>
+<h2 id="setting-up-the-virtual-machine">1. Setting Up the Virtual Machine</h2>
+<ol type="1">
+<li><p>Ensure your disk has at least 14GB of space.</p></li>
+<li><p>Download the course virtual machine (~5.8GB) from <a href="https://courses.cs.washington.edu/courses/cse478/data/" class="uri">https://courses.cs.washington.edu/courses/cse478/data/</a>. You’ll need both the <code>.vmdk</code> and the <code>.ovf</code> files. Right-click on the files and “Save Link As…”, making sure they’re saved to the same directory.</p></li>
+<li><p>Download VMware software to run the virtual machine from <a href="http://vmware.cs.washington.edu/" class="uri">http://vmware.cs.washington.edu/</a> (VMware Workstation Player for Windows and Linux, VMware Fusion for macOS). More instructions are available from the CSE Lab <a href="https://www.cs.washington.edu/lab/software/linuxhomevm">here</a>.</p>
+<blockquote>
+<p>If you have an Apple silicon device, you will be using the UTM hypervisor <a href="https://mac.getutm.app/" class="uri">https://mac.getutm.app/</a> with a different virtual machine.<br />
+Please download the <code>.utm</code> virtual machine image from <a href="https://courses.cs.washington.edu/courses/cse478/data/" class="uri">https://courses.cs.washington.edu/courses/cse478/data/</a> and run it with UTM. You should be able to log in with no username or password necessary, but if needed, the password is <code>prl_robot</code>. Other instructions should remain the same. Note this is in beta, so some hiccups are expected. Contact the course staff for more details!</p>
+</blockquote></li>
+<li><p>Install and launch the VMWare software. Choose “Import existing virtual machine” and select the <code>.ovf</code> file that you downloaded.</p></li>
+<li><p>Log in to your virtual machine with the username <code>robotics</code> and password <code>robotics</code>.</p>
+<figure class="figure mw-100 w-500px">
+    
+    <img src="vm_login.png"
+         alt="VM login screen"
+         class="figure-img img-fluid"
+    /> <figcaption class="figure-caption">
+            <p>VM login screen</p>
+        </figcaption>
+</figure>
+</li>
+</ol>
+<details>
+<summary>
+VM Troubleshooting
+</summary>
+<p><strong>Error: Not enough physical memory is available to power on this virtual machine with its configured settings.</strong></p>
+<p>The VM is pre-configured with 4GB of memory, which your computer may not be able to support. To fix this, navigate to “Virtual Machine &gt; Settings &gt; Processors &amp; Memory” (may be different on Windows) and reduce from 4096MB.</p>
+<figure class="figure mw-100 w-500px">
+    
+    <img src="vm_memory.png"
+         alt="VM memory settings"
+         class="figure-img img-fluid"
+    /> <figcaption class="figure-caption">
+            <p>VM memory settings</p>
+        </figcaption>
+</figure>
+
+<p>If your VM was previously able to power on but you start seeing this error, there may be another process on your computer that’s taking up more memory. Try closing those processes before starting the VM.</p>
+</details>
+<details>
+<summary>
+Recommended: Enable 3D Graphics Acceleration
+</summary>
+<p>Turning on 3D graphics acceleration will improve the frame rate that RViz runs at, so moving the camera around and driving with the keyboard should be much smoother. You’ll need to shut down your virtual machine completely first. Instructions for <a href="https://docs.vmware.com/en/VMware-Workstation-Pro/16.0/com.vmware.ws.using.doc/GUID-F5186526-2382-4F4A-8009-3D07773A1404.html" data-proofer-ignore="true">VMWare Workstation</a> and <a href="https://docs.vmware.com/en/VMware-Fusion/12/com.vmware.fusion.using.doc/GUID-C0E9FDAC-BC40-4A6B-8940-013597CA5E5B.html" data-proofer-ignore="true">VMWare Fusion</a>.</p>
+</details>
+<h2 id="getting-started-with-ros">2. Getting Started with ROS</h2>
+<p>The <a href="https://en.wikipedia.org/wiki/Robot_Operating_System">Robot Operating System (ROS)</a> is a robotics middleware framework (not actually an operating system) that is commonly used in robotics platforms. MuSHR uses ROS in various ways, the most significant of which is as an interprocess communications provider. By implementing functionalities in many separate “nodes” (each their own process)<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> and relying on ROS mechanisms to communicate, MuSHR can seamlessly integrate custom software with existing, off-the-shelf ROS components. Gaining a grasp of fundamental ROS concepts will help you make the most of the MuSHR system, and the <a href="https://robots.ros.org/">many other robots</a> which use ROS.</p>
+<p>ROS code is organized into <strong>packages</strong>, which can contain executables, libraries and other information like message formats, geometric meshes, and maps. Some of these executables may be <strong>nodes</strong>, processes that register themselves with a <strong>ROS Master</strong> and communicate with other nodes. A package can have multiple nodes. Each package has a <code>package.xml</code> file which specifies dependencies, as well as a <code>CMakeLists.txt</code> makefile. Most ROS code is written in Python or C++ (though there are many community-driven efforts to support other languages, including Rust and JavaScript).</p>
+<p>ROS development is done in a <strong>workspace</strong>, a specially structured file tree that enables you to work on many separate packages and build them all at once. For this course, we’ve crafted a repository <code>~/dependencies_ws</code> that combines all of the key MuSHR packages you’ll need in order to run the simulator alongside starter code and packages for each assignment. This means you won’t have to create any packages.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+<p>ROS workspaces are designed to be layered, which allows you to build sets of packages separately and to override packages selectively. In fact, ROS itself is just a bunch of packages living in a workspace in <code>/opt/ros/noetic</code>, and for the most part every ROS workspace you’ll encounter will overlay this root workspace. We won’t be using the <a href="https://wiki.ros.org/cn/catkin/Tutorials/workspace_overlaying">full power</a> of <strong>workspace overlays</strong>, but we will be using two overlaid workspaces (in addition to the root installation workspace) to better manage the packages you’ll need to work with MuSHR.</p>
+<p>First, let’s take a look at our workspaces.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls ~/dependencies_ws/</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">build</span> devel logs src</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls ~/mushr_ws/</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">build</span> devel logs src</span></code></pre></div>
+<details>
+<summary>
+Terminal Tip: <code>ls</code>
+</summary>
+<p>The <code>ls</code> command lists the contents of a directory. In a path like <code>~/dependencies_ws</code>, the <code>~</code> is shorthand for your home directory (<code>/home/robotics</code> for this virtual machine).</p>
+<p>You can use tab completion rather than typing out the entire command. Try typing <code>ls ~/dep&lt;TAB&gt;</code>. If there are multiple completions, press the tab key twice to see all the options.</p>
+</details>
+<p>As the names indicate, one workspace is dedicated to the <em>dependencies</em> you’ll need for your projects. They’re set up for you, and you shouldn’t need to modify them. The <code>mushr_ws</code> is for your project code.</p>
+<p>The key part of the workspace is the <code>src</code> folder which contains <em>packages</em>. The others are automatically generated at build time. Pretty simple!</p>
+<p>Let’s update and build the dependencies:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source /opt/ros/noetic/setup.bash</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/dependencies_ws/src/cse478_dependencies/</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git pull <span class="at">--recurse-submodules</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rosdep install <span class="at">--from-paths</span> . <span class="at">--ignore-src</span> <span class="at">-y</span> <span class="at">-r</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/dependencies_ws</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catkin clean  <span class="co"># remove old build files</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catkin build</span></code></pre></div>
+<details>
+<summary>
+Terminal Tip: <code>cd</code>
+</summary>
+<p>The <code>cd</code> command changes the current directory.</p>
+</details>
+<p>You’ll see a lot of colorful output, ending with a message saying how many packages were built. All <code>catkin build</code> did was compile a bunch of executables and dump build artifacts into the <code>build</code> and <code>devel</code> folders. However, your shell doesn’t know how to find and run them because they aren’t on the <a href="http://www.linfo.org/path_env_var.html"><code>PATH</code></a>. You will need to <strong>activate the workspace</strong> by running a special script that configures your shell’s environment variables to know about all of the build output. To activate a workspace, you run:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source ~/dependencies_ws/devel/setup.bash</span></code></pre></div>
+<p>Let’s set up your project workspace. Clone your course repository into the <code>~/mushr_ws/src</code> folder:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/mushr_ws/src/</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git clone git@gitlab.cs.washington.edu:cse478/25wi/your_repo_name.git mushr478</span></code></pre></div>
+<details>
+<summary>
+Git Troubleshooting
+</summary>
+<p><strong>Error: Please make sure you have the correct access rights and the repository exists.</strong></p>
+<p>If you’re sure the repository link is correct, you may need to first tell GitLab about this virtual machine. <a href="https://gitlab.cs.washington.edu/help/user/ssh.md#generate-an-ssh-key-pair">Create a new public/private ssh key pair</a> and <a href="https://gitlab.cs.washington.edu/-/profile/keys">add the public SSH key to GitLab</a>.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ssh-keygen <span class="at">-t</span> ed25519 <span class="at">-C</span> <span class="st">&quot;your_email@example.com&quot;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat ~/.ssh/id_ed25519.pub</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>your <span class="ex">public</span> key<span class="op">&gt;</span></span></code></pre></div>
+<p>Copy the public key output from your terminal (<code>Ctrl-Shift-C</code> or right-click to copy) and open a web browser (still from the virtual machine). Sign in to <a href="https://gitlab.cs.washington.edu" class="uri">https://gitlab.cs.washington.edu</a>, edit your profile (in the top right), then select “SSH Keys” (in the left sidebar). You may also find <a href="https://gitlab.cs.washington.edu/help/user/ssh.md#add-an-ssh-key-to-your-gitlab-account">these instructions</a> useful.</p>
+</details>
+<p>Let’s take a look at the project starter files:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls ~/mushr_ws/src/mushr478/</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">cse478</span> introduction README.md</span></code></pre></div>
+<p>The <code>README.md</code> Markdown file describes the repository and provides some detailed information about running the autograder tests, which will be useful when you start writing code later in this project. <code>cse478</code> and <code>introduction</code> are ROS packages: <code>introduction</code> is the package that you’ll edit in this project, while <code>cse478</code> is a utility package that <code>introduction</code> shares with future projects. Each project will be its own ROS package.</p>
+<p>Now we’re going to build and activate the workspaces in order to ensure that they’re overlaid:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> <span class="co"># Activate root workspace</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source /opt/ros/noetic/setup.bash</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> <span class="co"># Activate dependencies underlay (built previously)</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source ~/dependencies_ws/devel/setup.bash</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> <span class="co"># Build and activate projects workspace</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/mushr_ws/</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catkin build</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source ~/mushr_ws/devel/setup.bash</span></code></pre></div>
+<p>Note that we sourced the dependencies workspace <em>before</em> we built the MuSHR project workspace <code>mushr_ws</code>. This way, the packages inside <code>mushr_ws</code> have access to the packages built in the <code>dependencies_ws</code> underlay.</p>
+<p>You can verify that your workspaces are overlaid as expected by checking the output of <code>catkin config</code> from within <code>mushr_ws</code>. The second line should read <code>Extending: /home/robotics/dependencies_ws/devel:/opt/ros/noetic</code>.</p>
+<p>If you wish to remove all the existing build files in a workspace and build from scratch:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catkin clean</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catkin build</span></code></pre></div>
+<details>
+<summary>
+<span id="rebuilding-dependencies" class="h5">Rebuilding Dependencies</span>
+</summary>
+<p>If you plan to either (1) rebuild your dependencies (which you may need to if, for instance, we ask you to pull new dependencies) or (2) remove existing builds in <code>mushr_ws</code>, you should <strong>always</strong> activate the dependencies workspace before building the MuSHR workspace:</p>
+<p>Assuming we’ve asked you to pull some new dependencies:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/dependencies_ws/src/cse478_dependencies/</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git pull <span class="at">--recurse-submodules</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catkin clean  <span class="co"># remove old build files</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catkin build</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/mushr_ws/src/mushr478/</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catkin clean</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source ~/dependencies_ws/devel/setup.bash</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catkin build</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source ~/mushr_ws/devel/setup.bash</span></code></pre></div>
+</details>
+<h2 id="running-the-mushr-car-in-simulation">3. Running the MuSHR Car in Simulation</h2>
+<p>This section will show you how to run the MuSHR simulator and visualize what is going on. Simulators are important because they allow you to test things quickly and without the risk of damaging a robot, the environment, or people. Our simulator uses a kinematic car model (with some noise sprinkled in), meaning it simply implements and integrates some equations that describe the ideal motion of a mechanical system. It will not perfectly reflect the real world dynamics of the car. Regardless, it is still useful for a lot of things.</p>
+<p>We’ll run the simulator using a <strong>launch file</strong>. These are XML files that describe how different software components should be started. These files allow us to start a large number of ROS nodes with only few commands. To launch our simulator, open a terminal and run:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/mushr_ws/</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source ~/mushr_ws/devel/setup.bash</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch cse478 teleop.launch</span></code></pre></div>
+<p>Moving forward, we won’t always spell out that you’ll need to activate the <code>mushr_ws</code> workspace to do something. But remember that you can’t interact with ROS without having activated a workspace in your terminal. If you try to <code>roslaunch</code> and your terminal says “Command ‘roslaunch’ not found”, you probably forgot to activate the workspace!</p>
+<p>Like many <code>rosXXX</code> terminal commands, the first argument is the name of a package, and the second is the name of something inside that package (in this case, a launch file).</p>
+<p>A small gray window should appear. The simulation is running, you just can’t see it yet!</p>
+<p>Let’s try to convince ourselves of this. Open another terminal and run <code>rosnode list</code> to see all of the nodes running. Each of those nodes is a separate process. We can see the communication between nodes by examining the <strong>topics</strong> they are <strong>publishing messages to</strong> and <strong>subscribing to messages from</strong>. <strong>Messages</strong> are packets of information in a specific format that can be routed around a ROS system. Running <code>rostopic list</code> will display the names of all the open topics. We can actually see the simulation in action if we look at some of the messages coming from the simulated hardware. Let’s use the <code>rostopic</code> helper to view these messages:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rostopic echo /car/odom</span></code></pre></div>
+<p>Messages will start streaming into your terminal. Now focus on the gray teleop window and use the WASD keys to send commands to the vehicle. W and A move forward and backward, S and D turn the steering wheel left and right. Notice how the numbers are changing in response to your commands?</p>
+<p>To stop the simulation, press <code>&lt;Ctrl-C&gt;</code> in the <code>teleop.launch</code> terminal window.</p>
+<h3 id="visualizing-the-simulator">Visualizing the Simulator</h3>
+<p>Start the simulation again. To visualize the simulation, open up a separate terminal and run:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rosrun rviz rviz <span class="at">-d</span> ~/mushr_ws/src/mushr478/cse478/config/default.rviz</span></code></pre></div>
+<p>If you see error messages in your terminal like “Could not load model…”, remember to activate your workspace!</p>
+<p>This will launch RViz with a configuration that has all the right topics visualized. A window like this should appear:</p>
+<figure class="figure">
+    
+    <img src="rviz_image.png"
+         alt="RViz visualizer"
+         class="figure-img img-fluid"
+    /> <figcaption class="figure-caption">
+            <p>RViz visualizer</p>
+        </figcaption>
+</figure>
+
+<p>To drive the car, click on the small gray window and use the WASD keys.</p>
+<p>In RViz, you will notice multiple panels. The right panel is the views panel. The “Target Frame” option tells the camera what to focus on. If you don’t want it to track the car, you can change it from “base_link” to “map”. The center panel is the view panel; you can zoom, pan, and rotate using the mouse and mouse wheel.</p>
+<p>The top panel has a few tools, like Measure and Publish Point. Publish Point is particularly useful for relocating the MuSHR car. Just click on it, then click on the map; the simulator listens to the message RViz sends and sets the car position to match.</p>
+<p>Finally, the left panel shows all of the ROS topics that RViz is subscribed to. For example, if you toggle off the checkbox for the Map topic, you will no longer see the map visualization (although it’s still being used by the simulator). You can add additional topics by clicking the “Add” button then “By topic”. Try adding the origin axes by adding a topic “By display type”. You will mainly add “By topic” but “By display type” may be useful in situations where the list of topics is too long to look through.</p>
+<p>Remember, RViz is a <strong>visualizer</strong>, not a simulator. You can close RViz, but just like how the world continues when you close your eyes, the simulator will chug ahead. So far, we’ve been using RViz to visualize the ROS data being emitted by the simulator. In other situations, the information could come from the software running on a physical robot.</p>
+<p>When you close RViz, it may prompt you to save your changes. Saving in RViz saves the RViz configuration, not the state of the simulator itself. Unless you’ve added new topics that you want visualized when RViz starts up, you probably don’t need to save those changes.</p>
+<details>
+<summary>
+Custom RViz Configuration
+</summary>
+<p>If you launch RViz with:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rviz</span></code></pre></div>
+<p>RViz will load its default configuration (which usually is empty). Try adding the topic that you are interested in, saving the RViz configuration (“File &gt; Save Config”), and relaunching RViz. You should find all of the panels open in the same position, and all parameters like the topics being visualized or the camera position set to the same settings as before.</p>
+</details>
+<h3 id="changing-maps">Changing Maps</h3>
+<p>We will now change the map to the second floor of CSE2. Let’s take a look at the <code>teleop.launch</code> file we’ve been using. You can find it inside <code>cse478/launch</code>. A fast way to move to the package is <code>roscd</code><a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roscd cse478</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> pwd</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="ex">/home/robotics/mushr_ws/src/mushr478/cse478</span></span></code></pre></div>
+<p>Now open <code>teleop.launch</code> in <code>launch/</code> using your favorite editor<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> YOUR_EDITOR launch/teleop.launch</span></code></pre></div>
+<p>You can see a comment that explains how to configure the map</p>
+<pre><code>&lt;!-- We take a map path either as an environment variable or an argument.
+     The argument takes precedence. --&gt;</code></pre>
+<p>This means that we can either pass the map as argument each time like this,</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch cse478 teleop.launch map:=<span class="st">&#39;$(find cse478)/maps/&lt;map_name&gt;.yaml&#39;</span></span></code></pre></div>
+<p>or by putting the same string into a variable named <code>MAP</code> in our terminal environment:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> export MAP=<span class="st">&#39;$(find cse478)/maps/&lt;map_name&gt;.yaml&#39;</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch cse478 teleop.launch</span></code></pre></div>
+<p>You can use whichever way you like, but note that <em>single quotes (') are important</em>. The terminal treats double-quoted strings differently than single-quoted strings, and interchanging them may cause errors.</p>
+<div class="deliverable">
+<blockquote>
+<p>Use whichever method you prefer to set the map to <code>cse2_2.yaml</code> from the cse478 package. Then, save a screenshot of RViz showing the new map. (Note that the car will start in the “walls” and therefore won’t be able to drive. Use the Publish Point tool in the top panel to place the car in an open hallway before driving with WASD.)</p>
+</blockquote>
+</div>
+<h2 id="testing-instructions">4. Testing Instructions</h2>
+<p>Each package contains a <code>test</code> directory with unit and integration tests built with the <a href="https://wiki.ros.org/rosunit">rosunit</a> framework. The <code>catkin test</code> command provides a summary view of all test suites.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catkin test               <span class="co"># Run all tests</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catkin test introduction  <span class="co"># Run tests for the introduction package</span></span></code></pre></div>
+<p>To run individual test suites, the command will differ by the type of test suite.</p>
+<p>For tests that use ROS (to start a node, or publish/subscribe to topics from the code being tested), use <code>rostest</code> to run the corresponding test launch file (which will end in <code>.test</code>).</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rostest introduction pose_listener.test <span class="at">--text</span></span></code></pre></div>
+<p>For pure Python unit tests (which don’t use ROS), simply run the file:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> python3 <span class="va">$(</span><span class="ex">rospack</span> find introduction<span class="va">)</span>/test/fibonacci.py</span></code></pre></div>
+<h2 id="q1.-your-first-publisher-node-fibonacci">Q1. Your First Publisher Node: Fibonacci</h2>
+<p>As you may recall from above, <a href="http://wiki.ros.org/rospy/Overview/Publishers%20and%20Subscribers">publishers and subscribers</a> are how ROS manages interprocess communication. Publishers send out messages to a topic, while subscribers choose a topic to receive messages from. Publishers and subscribers can even be on different machines in a network, although we won’t take advantage of that feature in these projects.</p>
+<p>We will be creating a simple ROS node that calculates the nth <a href="https://en.wikipedia.org/wiki/Fibonacci_number">Fibonacci number</a>. It will read n from a ROS parameter and publish the desired Fibonacci number to a ROS topic. The 0th Fibonacci number is 0, 1st is 1, 10th is 55, etc.</p>
+<p><strong>Q1.1</strong>: Implement the Fibonacci calculation in <code>src/introduction/fibonacci.py</code>. Then, verify your implementation on the provided test suite by running <code>python3 test/fibonacci.py</code>. You will need an O(n) implementation to pass the larger tests.</p>
+<p><strong>Q1.2</strong>: We’ve provided an annotated code skeleton to interface with ROS at <code>scripts/fibonacci</code>. Follow the instructions inline to complete the code. To evaluate your implementation, run:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rostest introduction fibonacci_small.test</span></code></pre></div>
+<p><strong>Q1.3</strong>: Finally, we will write a launch file for our node to make it easier to run. Since your Fibonacci calculator requires a ROS parameter to run, you will need to pass it to your node in your launch file. We have provided an annotated skeleton in <code>launch/fibonacci.launch</code>. Follow the inline instructions to complete the launch file and check your implementation.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rostest introduction fibonacci_launch.test</span></code></pre></div>
+<p>Let’s run the publisher node and see its output directly, without the tests. After launching <code>roscore</code>, listen to the Fibonacci output topic. Then, start your Fibonacci node using <code>fibonacci.launch</code>. You should see the Fibonacci number appear on the <code>/introduction/fib_output</code> topic in terminal 2! You can then run the Fibonacci node with different values for <code>index</code>. Here are the commands to run:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> <span class="co"># In terminal 1</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roscore</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> <span class="co"># In terminal 2</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rostopic echo /introduction/fib_output</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> <span class="co"># In terminal 3</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch introduction fibonacci.launch</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch introduction fibonacci.launch index:=20</span></code></pre></div>
+<h2 id="q2.-your-first-subscriber-poselistener">Q2. Your First Subscriber: PoseListener</h2>
+<p>In this question, we’ll combine ROS with the <a href="https://numpy.org/doc/stable/user/quickstart.html">NumPy</a> and <a href="https://matplotlib.org/">Matplotlib</a> scientific computing libraries. NumPy makes computations faster by using <strong>vectorization</strong>, and Matplotlib creates plots and other data visualizations.</p>
+<p>We will compute the <a href="https://mathworld.wolfram.com/L2-Norm.html">Euclidean norm</a> in two ways: with regular Python for loops and with functions from NumPy. The input will be a 2D NumPy array<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a> of shape (N, D), which contains N vectors each of dimension D. The expected output will be a 1D NumPy array of shape (N,), where each entry is the Euclidean norm of the corresponding vector. For example:</p>
+<p><span class="math display">\[
+\begin{bmatrix}3 &amp; 4\\5 &amp; 12\\8 &amp; 15\end{bmatrix} \rightarrow \begin{bmatrix}5\\13\\17\end{bmatrix}
+\]</span></p>
+<p><strong>Q2.1</strong>: Complete the <code>norm_python</code> function in <code>src/introduction/listener.py</code>. To index into a 2D array, NumPy extends the Python indexing syntax to take in multiple indices, with one for each dimension. If <code>data</code> represents the left matrix above, <code>data[0, 0]</code> returns 3 and <code>data[2, 1]</code> returns 15. Use Python for loops to compute the Euclidean norm and replace the zero entries in <code>norm</code>.</p>
+<p><strong>Q2.2</strong>: In the same file, complete the <code>norm_numpy</code> function. Try to use the NumPy functions <a href="https://numpy.org/doc/stable/reference/generated/numpy.sqrt.html">np.sqrt</a> and <a href="https://numpy.org/doc/stable/reference/generated/numpy.square.html">np.square</a>.</p>
+<p>After completing Q2.1 and Q2.2, expect your code to pass all the test cases when running <code>python3 test/norms.py</code>.</p>
+<div class="deliverable">
+<blockquote>
+<p>Run <code>python3 scripts/compare_norm</code> to compare the running time of your two implementations on 100 trials. This script will use <code>matplotlib</code> to plot the mean and standard deviation of your run time. Save the figure as <code>runtime_comparison.png</code>.</p>
+</blockquote>
+</div>
+<p><strong>Q2.3</strong>: In the <code>PoseListener</code> class in the same file, initialize a subscriber to the car’s pose topic. To do so, you will need to pass the topic’s name, the message type being published and a callback function. Each time the subscriber receives a message, it will call the callback function to process the message data.</p>
+<p>To find the right topic name to subscribe to, launch the car simulation again and run <code>rostopic list</code> to see all the topics being published. There’s one topic containing “car_pose” in its name. To figure out what type of messages are being sent on that topic, use <code>rostopic info XXX/car_pose</code>. When you construct the subscriber, pass <code>self.callback</code> as the callback function.</p>
+<p><strong>Q2.4</strong>: Fill in the <code>PoseListener.callback</code> method by extracting the x and y position from the pose messages, then saving them in <code>self.storage</code>. To see what a car pose message looks like, run your car in the simulator and <code>rostopic echo XXX/car_pose</code>. Alternatively, you can look up the message type being published online to see its fields. Expect your code to pass <code>pose_listener.test</code>.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rostest introduction pose_listener.test</span></code></pre></div>
+<p><strong>Q2.5</strong>: Now, let’s use the <code>PoseListener</code> to actually collect some data! In <code>scripts/pose_listener</code>, we’ve already used <code>matplotlib</code> to plot the xy-locations of your car and save the resulting plot to <code>locations.png</code>. Use your <code>norm_numpy</code> function to compute the car’s distance to the origin for all the xy-locations captured by the <code>PoseListener</code>. Then, use <code>matplotlib</code> to plot this distance as a function of time<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a>, and save the resulting plot to <code>distances.png</code>.</p>
+<p>First, start <code>teleop.launch</code> with the default <code>sandbox.yaml</code> map.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch cse478 teleop.launch map:=<span class="st">&#39;$(find mushr_sim)/maps/sandbox.yaml&#39;</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> <span class="co"># Or if you previously set the MAP environment variable in your terminal or .bashrc file</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> export MAP=<span class="st">&#39;$(find mushr_sim)/maps/sandbox.yaml&#39;</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch cse478 teleop.launch</span></code></pre></div>
+<p>Then, you can use the following launch configuration, which starts a <code>path_publisher</code> node (that will make the car follow a trajectory specified in a file) and your subscriber node. While passing the plan file, you can see the car’s movement in <code>rviz</code>.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> <span class="co"># In a separate shell</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch introduction path_publisher.launch plan_file:=<span class="st">&#39;$(find introduction)/plans/XXX.txt&#39;</span></span></code></pre></div>
+<div class="deliverable">
+<blockquote>
+<p>Run the above configuration with the <code>figure_8.txt</code> and <code>tight_figure_8.txt</code> plan files. For both plans, save the figures produced by <code>pose_listener</code> for submission: <code>locations.png</code> and <code>distances.png</code>.</p>
+</blockquote>
+</div>
+<div class="deliverable">
+<blockquote>
+<p>Optional: Let your artistic side shine and create your own plan file! If you do, please submit the plan file (and any code you may have used to generate it), as well as the <code>locations.png</code> producted by <code>pose_listener</code>.</p>
+</blockquote>
+</div>
+<h2 id="q3.-advanced-indexing-with-numpy">Q3. Advanced Indexing with NumPy</h2>
+<p>Vectorization isn’t just limited to mathematical operations. NumPy supports a variety of different forms of <a href="https://numpy.org/doc/stable/user/basics.indexing.html">indexing</a>, but <a href="https://numpy.org/doc/stable/user/basics.indexing.html#integer-array-indexing">integer array indexing</a> and <a href="https://numpy.org/doc/stable/user/basics.indexing.html#boolean-array-indexing">Boolean array indexing</a> are especially important for this course.</p>
+<p><strong>Q3.1</strong>: Complete the <code>extract_fibonacci_rows</code> function using integer array indexing (<code>src/introduction/indexing.py</code>).</p>
+<p><strong>Q3.2</strong>: Complete the <code>increment_rows_with_odd_first_element</code> function using Boolean array indexing (<code>src/introduction/indexing.py</code>).</p>
+<p>After completing Q3.1 and Q3.2, expect your code to pass all the test cases when running <code>python3 test/indexing.py</code>.</p>
+<h2 id="deliverables">Deliverables</h2>
+<p>Answer the following writeup questions in <code>introduction/writeup/README.md</code>, including the figures that you generated above. (<a href="https://www.markdownguide.org/basic-syntax/#images">Here</a> is the syntax for including an image in Markdown.)</p>
+<ol type="1">
+<li>Define in your own words what a <strong>node</strong>, <strong>topic</strong>, <strong>publisher</strong>, and <strong>subscriber</strong> are and how they relate to each other.</li>
+<li>What is the purpose of a <strong>launch file</strong>?</li>
+<li>Include the RViz screenshot showing the new map.</li>
+<li>Include your <code>runtime_comparison.png</code> figure for the different norm implementations.</li>
+<li>Include the <code>locations.png</code> and <code>distances.png</code> figures for the plan <code>figure_8.txt</code>.</li>
+<li>Include the <code>locations.png</code> and <code>distances.png</code> figures for the plan <code>tight_figure_8.txt</code>.</li>
+<li>Optional: Include your own plan file, any code you wrote to generate it, and the resulting <code>locations.png</code> figure.</li>
+</ol>
+<h3 id="submission">Submission</h3>
+<p><strong>Git</strong> is a version-control system that lets you back up your code to a remote server. That means that even if you accidentally delete all your code, the most recent version that you’ve backed up will be safe on the <a href="https://gitlab.cs.washington.edu/cse478/25wi/">CSE GitLab servers</a>. It’s also useful when multiple people are writing code together: one teammate can push their changes, and another can pull them down. Git will merge those changes together, and help identify when conflicts happen (e.g., when multiple people edited the same part of the file). You can learn more about using Git in this <a href="https://rogerdudler.github.io/git-guide/">guide</a>.</p>
+<p>In this class, you’ll use Git to submit your final project (code and writeup). From the <code>mushr478</code> directory, add all of the writeup files and changed code files. Commit those changes, then create a Git tag called <code>submit-proj1</code>. Pushing the tag is how we’ll know when your project is ready for grading.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/mushr_ws/src/mushr478/</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git diff                             <span class="co"># See all your changes</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git add .                            <span class="co"># Add all the changed files</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git commit <span class="at">-m</span> <span class="st">&#39;Finished Project 1!&#39;</span>  <span class="co"># Or write a more descriptive commit message</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git push                             <span class="co"># Push changes to your GitLab repository</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git tag submit-proj1                 <span class="co"># Create a tag named submit-proj1</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git push <span class="at">--tags</span>                      <span class="co"># Push the submit-proj1 tag to GitLab</span></span></code></pre></div>
+<h2 id="helpful-tips">Helpful Tips</h2>
+<details>
+<summary>
+<span id="using-the-terminal" class="h5">Using the Terminal</span>
+</summary>
+<p>Here’s a more in-depth <a href="https://www.digitalocean.com/community/tutorials/an-introduction-to-the-linux-terminal">introduction to the terminal</a> that you may find useful. Some important terminal commands to know:</p>
+<table>
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 88%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Command</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>pwd</code></td>
+<td style="text-align: left;"><strong>p</strong>rint <strong>w</strong>orking <strong>d</strong>irectory</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>ls</code></td>
+<td style="text-align: left;"><strong>l</strong>i<strong>s</strong>t files in the current directory</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>cd X</code></td>
+<td style="text-align: left;"><strong>c</strong>hange the <strong>d</strong>irectory (move) to <code>X</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>cd ~</code></td>
+<td style="text-align: left;">move to the home directory (in the VM, <code>/home/robotics</code>)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>cd ..</code></td>
+<td style="text-align: left;">move to the parent directory</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>cat X</code></td>
+<td style="text-align: left;">con<strong>cat</strong>enate files and print to the terminal (or, show the contents of a single file <code>X</code>)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>less X</code></td>
+<td style="text-align: left;">show the contents of file <code>X</code> in a pager (press <code>j</code> or <code>k</code> to scroll, <code>q</code> to close)</td>
+</tr>
+</tbody>
+</table>
+</details>
+<details>
+<summary>
+<span id="using-python" class="h5">Using Python</span>
+</summary>
+<p>If you’re familiar with Java, this <a href="https://medium.com/nestedif/cheatsheet-python-for-java-developers-98f75c94a1a" data-proofer-ignore="true">Python for Java Developers</a> guide might help you learn the syntax more quickly.</p>
+<p>If you want to learn more about using NumPy, you might find <a href="https://github.com/rougier/numpy-100/blob/master/100_Numpy_exercises.md">these exercises</a> interesting. To get an idea of the many visualizations that Matplotlib can help you create, view their <a href="https://matplotlib.org/stable/gallery/">gallery of sample plots</a>.</p>
+</details>
+<details>
+<summary>
+<span id="using-tmux" class="h5">Using tmux</span>
+</summary>
+<p><a href="https://github.com/tmux/tmux/wiki/Getting-Started">tmux</a> is a <strong>terminal multiplexer</strong>, which lets you use multiple “virtual” terminal sessions from a single terminal window. As you may have noticed, ROS can require starting many terminal sessions to simultaneously launch and monitor multiple nodes or topics. With tmux, you can attach and detach the different sessions from a single terminal window, and even split the terminal window to attach to multiple sessions simultaneously. If you’re interested, <a href="https://www.hostinger.com/tutorials/tmux-beginners-guide-and-cheat-sheet/">this cheat sheet</a> might also be useful. We’ve pre-installed tmux on your virtual machine.</p>
+</details>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>To learn more about these nodes, see the <a href="https://mushr.io/tutorials/overview/">MuSHR System Overview</a>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>But you can if you’d like to! Start by copying an existing package and modifying the <code>package.xml</code>, <code>CMakeLists.txt</code>, and <code>setup.py</code> files.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p><code>roscd</code> is just one of several helpers that are available when you have a workspace activated. See the <a href="https://wiki.ros.org/rosbash#Command_line_utilities">rosbash docs</a> to learn about others.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4" role="doc-endnote"><p><code>rosed cse478 teleop.launch</code>, for dedicated shortcutters.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5" role="doc-endnote"><p>Mathematically, a 2D array is a matrix. But with NumPy, always use <code>np.array</code> rather than <code>np.matrix</code>. The latter can have some unexpected behavior, so we don’t recommend using it. <a href="https://numpy.org/doc/stable/reference/generated/numpy.matrix.html">(And neither does NumPy.)</a><a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6" role="doc-endnote"><p>For simplicity, we’ll assume that the pose messages saved in <code>PoseListener.storage</code> were received in the same order they were published. This isn’t necessarily the case, but it’s close enough for our purposes. If you want to fix this, the messages have a timestamp that marks when they were published. Modify <code>PoseListener.storage</code> to save (x, y, time) rather than just (x, y), then sort. (The autograder test expects x to be in the first position, so please keep it there.)<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+  </div>
+</div>
+
+
+<script type="text/javascript" src="/courses/cse478/25wi/js/index.js" defer></script>
+
+    </div>
+    <footer class="courseweb-footer">
+  <div class="float-left courseweb-cse-wordmark">
+    <img class="img-fluid"
+         src="/courses/cse478/25wi/img/cse-wordmark.png"
+         alt="Paul G. Allen School of Computer Science & Engineering" />
+  </div>
+  <div class="float-right">
+    <a href="//www.washington.edu/online/terms/">UW Site Use Agreement</a>
+  </div>    
+</footer>
+
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+
+  </body>
+</html>

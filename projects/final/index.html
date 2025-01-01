@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <meta name="generator" content="Hugo 0.82.0" />
+
+  <title>CSE 478 | Final Project</title>
+
+  
+  <link rel="stylesheet" href="/courses/cse478/25wi/css/style.min.ecaf9ba3e25bf0e4c0d3a033f865796bf2281f8c58839e7f2290407c7c779834.css">
+  </head>
+
+  <body><header class="courseweb-header">
+  <nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark">
+    <a class="navbar-brand navbar-brand-filled bg-uwpurple d-none d-sm-inline" href="/courses/cse478/25wi/">CSE 478</a>
+    <a class="navbar-brand d-sm-none" href="/courses/cse478/25wi/">CSE 478</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    
+    <div id="nav" class="collapse navbar-collapse">
+      <ul class="navbar-nav mr-auto">
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/courses/cse478/25wi/schedule/">Schedule</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link active" href="/courses/cse478/25wi/projects/">Projects</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/courses/cse478/25wi/mushr_lab/">Lab Guide</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/courses/cse478/25wi/discussion/">Discussion</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="https://edstem.org/us/courses/50038/discussion/">Ed</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="https://canvas.uw.edu/courses/1694425">Canvas</a>
+        </li>
+        
+        
+        
+        
+        
+      </ul>
+    </div>
+    <span class="navbar-brand navbar-brand-filled bg-uwpurple d-none d-md-inline">25wi</span>
+  </nav>
+</header>
+
+    <div class="container">
+      
+<div class="row">
+  <div class="col-12">
+    <h1>Final Project</h1>
+
+    
+    
+    
+    <img src="/courses/cse478/25wi/projects/final/planning.png" class="img-fluid w-500px py-4"  alt="A MuSHR car drives through a hallway with a path planned in front of it."/>
+    
+    
+
+    <h2 id="overview">Overview</h2>
+<p>Throughout this quarter, you’ve implemented each part of the sense, plan, act paradigm for autonomous robotic control. This final project will be a stress test of sorts involving all the work you’ve done so far. You’ll need to test your car’s ability to localize, plan, and follow paths in a new environment. If your previous projects were implemented efficiently and correctly, this project will likely not require any adjustments to your code.</p>
+<p>Please complete this assignment with the same groups from projects 1-4.</p>
+<h2 id="getting-started">Getting Started</h2>
+<p>You’ll need to update a few files to easily get started on this project, which can be obtained by pulling from our <a href="https://gitlab.cs.washington.edu/cse478/25wi/mushr478">starter repository</a>. If you followed the instructions in Project 3 to add an upstream remote, then you can just run the following:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git pull upstream main</span></code></pre></div>
+<h2 id="your-task">Your Task</h2>
+<p>We are providing you with a map of the CSE building (Allen Center) basement hallways. Your job will be to make your car drive from one end of the hallway (near 022 and Snack Overflow) to the other end (by 014).</p>
+<h3 id="how-to-driving-in-the-hallways">How To: Driving in the Hallways</h3>
+<p>You can use the same instructions from Project 4 to run each part of your code on the car. As a reminder, these commands are below. Run each of these commands on the car in a separate terminal for each one.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch mushr_base teleop.launch</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rosrun map_server map_server <span class="va">$(</span><span class="ex">rospack</span> find cse478<span class="va">)</span>/maps/cse_basement.yaml</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch localization particle_filter_sim.launch use_namespace:=true publish_tf:=true tf_prefix:=<span class="st">&quot;car/&quot;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch control controller.launch type:=mpc tf_prefix:=<span class="st">&quot;car/&quot;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch planning planner_car.launch num_vertices:=1000 connection_radius:=20 curvature:=1</span></code></pre></div>
+<p>Then, on your workstation computer, run the following commands to start RViz and connect it to your car.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hostname <span class="at">-I</span> <span class="co"># to find your workstation ip address</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> export ROS_IP=<span class="op">&lt;</span>workstation-ip<span class="op">&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> export ROS_MASTER_URI=http://172.16.77.<span class="op">&lt;</span>car-#<span class="op">&gt;</span>:11311</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rviz</span></code></pre></div>
+<p>Now, place your car in the hallway and use the <code>2d Pose Estimate</code> button to initialize your particle filter. Finally, after ensuring that your roadmap has finished construction, use the <code>2d Nav Goal</code> button to specify a target for your car. Hold down the right bumper on your controller to allow the car to be controlled autonomously.</p>
+<blockquote>
+<p>In practice, while this method will work, it will be difficult to debug with since the workstation with RViz running on it won’t be visible from the car’s position. We recommend running a second instance of RViz on a virtual machine on a group member’s laptop. This RViz instance won’t be able to send messages to the car because of virtual machine networking issues, but it will be able to visualize all the topics needed to diagnose issues while observing the car. If you also run the ssh terminals to connect with the car from the VM, you’ll have a much quicker way to stop and restart nodes when needed. Alternatively, you can run RViz on the car itself and see the results on your virtual machine using X11 forwarding by appending <code>-X</code> to the ssh command. This instance of RViz will be very slow, but will be able to specify the initial pose and nav goals. If you choose to use this method, we suggest also running an instance of RViz on the virtual machine, which will be able to visualize topics but won’t be able to send messages to the car.</p>
+</blockquote>
+<h3 id="hints">Hints</h3>
+<p>Below are some suggestions that can help you if you get stuck.</p>
+<h4 id="processing-power">Processing Power</h4>
+<p>One of the limitations with the car is its small, low-powered computer. Some tasks, such as planning long paths, might take unreasonably long for the car to complete. Take a look at the parameters you use when running the planner node to help speed up the planning process. As an alternative option, you can run some nodes on the workstation instead of the car. Teleop, localization, and controller should be run directly on the car, but others can be offloaded to the workstation (note that these will not work from a virtual machine due to the networking issues discussed earlier, and may suffer from network reliability issues).</p>
+<h4 id="hardware-tuning">Hardware Tuning</h4>
+<p>You may find that your car’s motions don’t match up with the controls that are sent to it. To fix this, you can do some hardware tuning to make the car’s motion line up better with expected values. There is a simple process for tuning these values, and a tutorial is available on the <a href="https://mushr.io/tutorials/tuning/">MuSHR website</a>.</p>
+<h4 id="launch-file">Launch File</h4>
+<p>There are a lot of things that need to be run repeatedly on the car. If you want, you can simplify the process of starting all your code by creating a launch file that will run all the nodes you need at once. Use the existing launch files as a template to include all the launch files you need. Place your launch file in any package’s <code>launch/</code> directory. Use the <a href="http://wiki.ros.org/roslaunch/XML">roslaunch docs</a> as a reference for additional details on launch file syntax.</p>
+<h4 id="additional-parameters">Additional Parameters</h4>
+<p>You may find that some parameters should be changed beyond the parameters included in our <code>parameters.yaml</code> files. For example, some controller types have additional parameters which are found in the <code>get_ros_params()</code> function of <code>controller_ros.py</code>. These parameters currently use a default value, but you can override them by adding the parameter into your <code>parameters.yaml</code> file.</p>
+<h2 id="deliverables">Deliverables</h2>
+<p>Using GitLab, you will submit a bag file of your car completing the assigned task, as well as a writeup answering a few short questions. Use the command below to record your bag file. You should start the bag file recording before you set the 2d Nav Goal in RViz.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rosbag record /map /car/scan /car/particle_filter/inferred_pose /car/particle_filter/particles /tf /car/controller/path/poses /car/controller/real_path/poses /move_base_simple/goal /car/teleop/joy</span></code></pre></div>
+<p>Answer the following questions in <code>final/README.md</code>. Include your video and bag files in the <code>final/</code> directory.</p>
+<ol type="1">
+<li>What controller type did you choose to use for path following in the hallways (<code>pid</code>, <code>pp</code>, <code>mpc</code>)? Why did you choose this controller type?</li>
+<li>What roadmap parameters did you use for planning (<code>num_vertices</code>, <code>connection_radius</code>, <code>curvature</code>)? Why did you choose these parameters?</li>
+<li>What was the most difficult part of making your code work in the hallways?</li>
+</ol>
+<h2 id="submission">Submission</h2>
+<p>As with the previous projects, you will use Git to submit your project (code, writeup and plots).</p>
+<p>From your <code>mushr478</code> directory, add any writeup files and changed code files. Commit those changes, then create a Git tag called <code>submit-final</code>. Pushing the tag is how we’ll know when your project is ready for grading.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/mushr_ws/src/mushr478/</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git diff                             <span class="co"># See all your changes</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git add .                            <span class="co"># Add all the changed files</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git commit <span class="at">-m</span> <span class="st">&#39;Finished Final Project!&#39;</span>  <span class="co"># Or write a more descriptive commit message</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git push                             <span class="co"># Push changes to your GitLab repository</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git tag submit-final                 <span class="co"># Create a tag named submit-final</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git push <span class="at">--tags</span>                      <span class="co"># Push the submit-final tag to GitLab</span></span></code></pre></div>
+
+  </div>
+</div>
+
+
+<script type="text/javascript" src="/courses/cse478/25wi/js/index.js" defer></script>
+
+    </div>
+    <footer class="courseweb-footer">
+  <div class="float-left courseweb-cse-wordmark">
+    <img class="img-fluid"
+         src="/courses/cse478/25wi/img/cse-wordmark.png"
+         alt="Paul G. Allen School of Computer Science & Engineering" />
+  </div>
+  <div class="float-right">
+    <a href="//www.washington.edu/online/terms/">UW Site Use Agreement</a>
+  </div>    
+</footer>
+
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+
+  </body>
+</html>
