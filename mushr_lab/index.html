@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <meta name="generator" content="Hugo 0.82.0" />
+
+  <title>CSE 478 | MuSHR Lab Information</title>
+
+  
+  <link rel="stylesheet" href="/courses/cse478/25wi/css/style.min.ecaf9ba3e25bf0e4c0d3a033f865796bf2281f8c58839e7f2290407c7c779834.css">
+  </head>
+
+  <body><header class="courseweb-header">
+  <nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark">
+    <a class="navbar-brand navbar-brand-filled bg-uwpurple d-none d-sm-inline" href="/courses/cse478/25wi/">CSE 478</a>
+    <a class="navbar-brand d-sm-none" href="/courses/cse478/25wi/">CSE 478</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    
+    <div id="nav" class="collapse navbar-collapse">
+      <ul class="navbar-nav mr-auto">
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/courses/cse478/25wi/schedule/">Schedule</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/courses/cse478/25wi/projects/">Projects</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link active" href="/courses/cse478/25wi/mushr_lab/">Lab Guide</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/courses/cse478/25wi/discussion/">Discussion</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="https://edstem.org/us/courses/50038/discussion/">Ed</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="https://canvas.uw.edu/courses/1694425">Canvas</a>
+        </li>
+        
+        
+        
+        
+        
+      </ul>
+    </div>
+    <span class="navbar-brand navbar-brand-filled bg-uwpurple d-none d-md-inline">25wi</span>
+  </nav>
+</header>
+
+    <div class="container">
+      
+<div class="row">
+  <div class="col-12">
+    <h1>MuSHR Lab Information</h1>
+
+    <h2 id="overview">Overview</h2>
+<p>Please read this entire guide carefully before coming to the MuSHR Lab (CSE 022) to conduct experiments. <!--We have prepared **5 MuSHR cars (v3)** and **7 Ubuntu 20.04 workstations**.--></p>
+<p>Questions or issues? Contact course staff on Ed or email <a href="mailto:sidtalia@cs.washington.edu">Sidharth Talia</a>.</p>
+<h4 id="location">Location</h4>
+<p>CSE 022 is located in the basement floor of the Allen Center. When you enter into the Allen lobby, take the elevator down one floor, then take a right out of the elevators. You will need your Husky card to access 022.</p>
+<h2 id="lab-usage-and-safety">1. Lab Usage and Safety</h2>
+<p>The lab will be open throughout the week.</p>
+<h4 id="after-entering-the-lab">After entering the lab</h4>
+<ol type="1">
+<li><p>Remember to keep your Husky Card with you at all times. CSE 022 requires card-key access. Don’t lock yourself out!</p></li>
+<li><p><strong>Do not move the furniture</strong> in the middle of the room. This is a part of the map, which you will use for localization.</p></li>
+<li><p>Start charging batteries (2 per car) with chargers located next to your workstation. <strong>Only charge batteries when you are physically present in the lab.</strong> Do not leave them charging overnight.</p></li>
+</ol>
+<h4 id="leaving-the-lab">Leaving the lab</h4>
+<ol type="1">
+<li><p>Unplug the batteries from your MuSHR car and return them to their table. Put the car back on the table.</p></li>
+<li><p>Don’t leave your belongings. Clean up your workspace (any cables, tools, etc.) and return anything you took to where you found them.</p></li>
+<li><p>Push your changes to GitLab. You can leave your code on the car, but please don’t change any files outside of <code>~/catkin_ws</code>.</p></li>
+<li><p><strong>If you are the last person to leave the lab</strong>: do a quick check around the room to make sure that none of the chargers are in charging mode (should flash green to indicate not-charging), and turn off the lights.</p></li>
+</ol>
+<h2 id="mushr-car-experiments">2. MuSHR Car Experiments</h2>
+<p><strong>Official Guides</strong>: <a href="https://mushr.io/tutorials/quickstart/">MuSHR Quickstart</a> | <a href="https://mushr.io/hardware/build_instructions/">Build Instructions</a> | <a href="https://mushr.io/tutorials/overview/">System Overview</a> | <a href="https://mushr.io/tutorials/first_steps/">Teleoperation</a></p>
+<p>The following is a <em>supplementary</em> guide to getting started with MuSHR cars in the lab. Reading the official guides before coming in will save you valuable debugging time.</p>
+<ol type="1">
+<li><p>Each MuSHR car requires <strong>2 batteries</strong>: one for the servo motor and another for the on-board Jetson computer. The motor battery has red-circular connectors and the Jetson battery has white clip-connectors(or red-circular connectors). The batteries can be found on the metal shelf in the middle of the room. Press the blue button on the charger to start/stop charging. <strong>Remember to only charge batteries when you are physically present in the lab.</strong></p>
+<figure class="figure mw-100 w-500px">
+    
+    <img src="charger.png"
+         alt="(Left) Not charging: flashing green light vs. (Right) Charging: solid red light"
+         class="figure-img img-fluid"
+    /> <figcaption class="figure-caption">
+            <p>(Left) Not charging: flashing green light vs. (Right) Charging: solid red light</p>
+        </figcaption>
+</figure>
+</li>
+<li><p>After connecting the batteries, the on-board Jetson computer should boot up within a few seconds (2 mins max) and a green light should turn on inside the case of the car. The motor battery can be placed in the holder at the bottom of the car, and the Jetson battery can be placed inside the 3D-printed shell. Ensure that the cables and connectors won’t get tangled with the wheels once they start spinning.</p></li>
+<li><p>Each car is connected to the “University of Washington” WiFi and has a static IP address. Check <a href="#mushr-car-reference">here</a> to find the username and IP address for your car. Then, from your workstation, SSH into the car <code>ssh &lt;username&gt;@&lt;robot_ip_addr&gt; -X</code> with the password <code>prl_robot</code>. <strong>Do not change the password, username, or hostname of the robot</strong>, otherwise the car cannot be used by the next person.</p></li>
+<li><p>To set up the network connection, open a separate terminal from the workstation and set <code>export ROS_MASTER_URI=http://&lt;robot_ip_addr&gt;:11311</code>. This connects your workstation ROS session to the car (using the car as the <a href="http://wiki.ros.org/Master">ROS Master</a>).</p>
+<blockquote>
+<p>Note: For every new terminal you open on your workstation, remember to set the <code>ROS_MASTER_URI</code>! Otherwise, your workstation will look for a <em>local</em> ROS Master.</p>
+</blockquote></li>
+<li><p>To teleoperate the robot, press the PS Button on the PS controller. Once the controller is connected, the LED should stop flashing white. Inside the SSH session, run <code>roslaunch mushr_base teleop.launch</code>. If no errors are thrown (everything goes right), you should be able to accelerate and steer the car with the joystick. As a safety feature, teleoperation will only work while you hold down the left bumper button (L1).</p>
+<figure class="figure mw-100 w-500px">
+    
+    <img src="teleop_controls.png"
+         alt="PS Joystick Controls"
+         class="figure-img img-fluid"
+    /> <figcaption class="figure-caption">
+            <p>PS Joystick Controls</p>
+        </figcaption>
+</figure>
+
+<blockquote>
+<p>Note: You’ll need to work with several terminal sessions on the car itself while running your projects. We recommend that you create a <a href="https://tmuxcheatsheet.com/">tmux</a> session for each command, to more easily run multiple commands in parallel.</p>
+</blockquote></li>
+<li><p>In your local terminal (where you set <code>ROS_MASTER_URI</code>), you should be able to list the current ROS topics being published by the car with <code>rostopic list</code>. You should be able to see all the published sensor feeds from the camera, LIDAR, etc.</p>
+<p>Start <code>rviz</code>, click the “Add” button on the bottom left corner, select “By Topic”, and add a “Laser” or “Camera” topic to visualize.</p></li>
+</ol>
+<h3 id="troubleshooting">Troubleshooting</h3>
+<p><strong>Official Debugging Guides</strong>: <a href="https://mushr.io/tutorials/workflow/">Workflow &amp; Troubleshooting</a></p>
+<p>As in most cases with physical robots, things will go wrong. Be patient with the debugging. Read the <a href="https://mushr.io/tutorials/workflow/">Workflow &amp; Troubleshooting</a> tutorial for additional tips.</p>
+<p>In general, if something isn’t working, try connecting directly to the on-board Jetson computer with an HDMI cable. Unplug the RealSense and LIDAR USB cables (blue and gray wires) and connect a keyboard and mouse. (There are extra HDMI-DVI cables, keyboards, and mice by the car storage table.) The Jetson also runs Ubuntu; you can log in to the <code>robot</code> or <code>prl_robot</code> user account with the password <code>prl_robot</code>.</p>
+<p>Most of the workstations in the lab are all-in-one PCs and can’t act as a monitor for the Jetson. However, we’ve left one standard tower PC workstation (artemis) unassigned to any group to be used for this purpose. You can unplug the mouse, keyboard, and display port cable from the back of the PC, then plug those into the car and run any commands needed</p>
+<p>Here are some common issues:</p>
+<details>
+<summary>
+Jetson won’t boot up or no green light
+</summary>
+You probably need to charge the batteries. Also, sometimes the Jetson takes a while to boot up. Connect to the HDMI port to see what’s going on.
+</details>
+<details>
+<summary>
+Can’t SSH into the car
+</summary>
+<p>The car probably disconnected from the UW Wifi. Connect to the HDMI port and follow the network setup instructions <a href="https://mushr.io/hardware/build_instructions/#software-setup">here</a>. Make sure the robot is on the “University of Washington” WiFi. Check the IP address with <code>ifconfig</code>. You should be able to ping the robot <code>ping &lt;robot_ip_addr&gt;</code> from any computer on the “University of Washington” Network, including your workstation.</p>
+</details>
+<details>
+<summary>
+Can’t start RViz, run <code>rostopic list</code>, or launch <code>teleop.launch</code>
+</summary>
+<p>This probably means something is wrong with the network connection. Check that <code>ROS_IP</code> and <code>ROS_MASTER_URI</code> are set correctly. See <a href="http://wiki.ros.org/ROS/EnvironmentVariables#ROS_MASTER_URI">this</a> for more info.</p>
+</details>
+<details>
+<summary>
+Teleoperation/Joystick not working
+</summary>
+<p>Check that the PS Controller is charged. You can charge it with a mini-USB cable from the steel rack. If the controller is blinking white, then something went wrong with the Bluetooth connection. Connect to the Jetson’s HDMI port and follow the Bluetooth setup instructions in <a href="https://mushr.io/hardware/build_instructions/#software-setup">Step 14 of the Hardware Guide</a>.</p>
+</details>
+<details>
+<summary>
+VESC Controller Error
+</summary>
+<p>VESC is the servo motor controller. This means the motor battery needs to be charged or isn’t connected properly.</p>
+</details>
+<details>
+<summary>
+RealSense Camera Initialization Error
+</summary>
+<p>Check that the RealSense cable (blue USB) is plugged in. (That said, your projects won’t use the RealSense at all.)</p>
+</details>
+<h2 id="ros-and-catkin-workspaces">3. ROS and Catkin Workspaces</h2>
+<p>All cars workstations have ROS Melodic and MuSHR dependencies pre-installed. Unlike in your virtual machine, all dependencies are installed locally so you can directly interface with hardware and network devices from the workstation.</p>
+<blockquote>
+<p>This also means you can easily <strong>brick the system</strong> with careless <code>sudo apt-get install</code> or <code>sudo apt-get purge</code> commands. So be very careful when installing additional dependencies and copy-pasting random code from StackOverflow. Be <em>particularly skeptical</em> of solutions that require reinstalling NVIDIA drivers, etc.</p>
+</blockquote>
+<p>The Catkin workspaces on the cars and workstations are slightly different from the VMs used for the projects. Dependencies and your code will live inside <code>~/catkin_ws</code> <strong>on the car</strong> (you should only run <code>rviz</code> or <code>rostopic list</code> on workstations):</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> <span class="co"># SSH to the car</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ssh <span class="op">&lt;</span>username<span class="op">&gt;</span>@<span class="op">&lt;</span>robot_ip_addr<span class="op">&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source ~/.bashrc</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> <span class="co"># Workspaces should already be sourced in the .bashrc file</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> <span class="co"># Clone your repo</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/catkin_ws/src</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git clone https://gitlab.cs.washington.edu/cse478/25wi/your_repo_name.git mushr478</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> <span class="co"># Build your workspace</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/catkin_ws</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catkin_make</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> <span class="co"># Don&#39;t forget to source your workspace in every terminal you open!</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source ~/catkin_ws/devel/setup.bash</span></code></pre></div>
+<blockquote>
+<p>Since each car is assigned to one group, you can leave your code on the cars between sessions in the lab. However, cars can easily break and you might lose access to your code at anytime, so be sure to push your code to GitLab often.</p>
+</blockquote>
+<h2 id="references">References</h2>
+<h3 id="workstation-reference">Workstation Reference</h3>
+<p>The workstations are running Ubuntu 20.04. You can log into the workstations with the username <code>capstone</code>. The password is located on the Ed board and written on a whiteboard in the lab; do not share and do not change this!</p>
+<p>Most commands will be run on the car, but the car won’t be able to run rviz smoothly. Rviz and ros are already installed on the workstations, but you will need to set up a workspace with your code:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> <span class="co"># Activate the dependencies workspace underlay</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source ~/dependencies_ws/devel/setup.bash</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> <span class="co"># Create workspace if it&#39;s not already there</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mkdir <span class="at">-p</span> ~/mushr_ws/src <span class="kw">&amp;&amp;</span> <span class="bu">cd</span> ~/mushr_ws/src</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> <span class="co"># Clone your repo</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git clone https://gitlab.cs.washington.edu/cse478/25wi/your_repo_name.git mushr478</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> <span class="co"># Build your workspace</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/mushr_ws</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catkin build</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> <span class="co"># Don&#39;t forget to source your workspace in every terminal you open!</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source ~/mushr_ws/devel/setup.bash</span></code></pre></div>
+<h3 id="mushr-car-reference">MuSHR Car Reference</h3>
+<p>There are 15 cars set up in the lab area for your use. Your group will be assigned one car to work with. You should only use the car that you have been assigned.</p>
+<p>Each car should automatically connect to the University of Washington wifi with a static IP address.</p>
+<ul>
+<li>IPv4: <code>172.16.77.&lt;car #&gt;</code></li>
+<li>Username: <code>robot</code></li>
+<li>Password: <code>prl_robot</code></li>
+</ul>
+<p>You can unplug the HDMI-DVI cables, keyboards, and mice from the workstations if you need to connect directly to a MuSHR car’s on-board Jetson computer.</p>
+<!--
+## Tutorial: Building a Map with [Hector Mapping][hector-mapping]
+
+1. Set up teleoperation by following [Section 2](#mushr-car-experiments).
+
+2. Open a new terminal(or tmux session), SSH to the car, and launch `mushr_noetic`. Then run `rosrun hector_mapping hector_mapping _base_frame:=car/base_link _odom_frame:=/car/base_link _scan_topic:=/car/scan`
+
+3. In the local terminal (with `export ROS_MASTER_URI=http://<robot_ip_addr>:11311` set), run `rviz` and add the live "Map" topic to the visualizer. You should see a gray and black map.
+
+4. Drive the car slowly around the room. Avoid making jerky accelerations or turns.
+
+5. Once you are satisfied with the map, you can save it with `cd <save_path> & rosrun map_server map_saver -f 'cse_022'`.
+
+[hector-mapping]: http://wiki.ros.org/hector_mapping
+-->
+
+  </div>
+</div>
+
+    </div>
+    <footer class="courseweb-footer">
+  <div class="float-left courseweb-cse-wordmark">
+    <img class="img-fluid"
+         src="/courses/cse478/25wi/img/cse-wordmark.png"
+         alt="Paul G. Allen School of Computer Science & Engineering" />
+  </div>
+  <div class="float-right">
+    <a href="//www.washington.edu/online/terms/">UW Site Use Agreement</a>
+  </div>    
+</footer>
+
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+
+  </body>
+</html>
