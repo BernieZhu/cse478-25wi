@@ -1,29 +1,216 @@
 <!DOCTYPE html>
-<html>
-<head>
- <title>CSE478: Autonomous Robotics</title> 
- <style type="text/css">
-  body {
-   font-family: verdana,sans-serif;
-  }
-  h1 {
-   text-decoration: underline;
-   font-style: oblique;
-   text-shadow: 1px 1px 1px #ccc;
-  }
-  .terms {
-   font-size: 9pt;
-   color: #666;
-  }
- </style>
-</head>
-<body>
-<h1>CSE478: Autonomous Robotics</h1>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<p>Welcome. Web content is forthcoming for Winter, 2025. Please visit 
-<a href="../">here</a> for basic course information and links to the webs 
-for earlier quarters.</p>
+  <meta name="generator" content="Hugo 0.82.0" />
 
-<div class="terms"><a href="https://www.washington.edu/online/privacy/" title="University of Washington Online Privacy Statement">Privacy policy</a> and <a href="https://www.washington.edu/online/terms/" title="University of Washington Website Terms and Conditions of Use">terms of use</a></div>
-</body>
+  <title>CSE 478 | Autonomous Robotics</title>
+
+  
+  <link rel="stylesheet" href="/courses/cse478/25wi/css/style.min.ecaf9ba3e25bf0e4c0d3a033f865796bf2281f8c58839e7f2290407c7c779834.css">
+  </head>
+
+  <body><header class="courseweb-header">
+  <nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark">
+    <a class="navbar-brand navbar-brand-filled bg-uwpurple d-none d-sm-inline" href="/courses/cse478/25wi/">CSE 478</a>
+    <a class="navbar-brand d-sm-none" href="/courses/cse478/25wi/">CSE 478</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    
+    <div id="nav" class="collapse navbar-collapse">
+      <ul class="navbar-nav mr-auto">
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/courses/cse478/25wi/schedule/">Schedule</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/courses/cse478/25wi/projects/">Projects</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/courses/cse478/25wi/mushr_lab/">Lab Guide</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="/courses/cse478/25wi/discussion/">Discussion</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="https://edstem.org/us/courses/50038/discussion/">Ed</a>
+        </li>
+        
+        
+        
+        
+        
+        
+        <li class="nav-item">
+          <a class="nav-link" href="https://canvas.uw.edu/courses/1694425">Canvas</a>
+        </li>
+        
+        
+        
+        
+        
+      </ul>
+    </div>
+    <span class="navbar-brand navbar-brand-filled bg-uwpurple d-none d-md-inline">25wi</span>
+  </nav>
+</header>
+
+    <div class="container">
+      
+<div class="row">
+  <div class="col-12">
+    <h1 id="cse-478-autonomous-robotics">CSE 478: Autonomous Robotics</h1>
+<p><strong>Instructor:</strong> <a href="https://homes.cs.washington.edu/~abhgupta/">Abhishek Gupta</a> (abhgupta at cs)</p>
+<p><strong>TAs:</strong><br>
+Carolina Higuera (chiguera at cs)<br>
+Bernie Zhu (haozhu at cs)<br>
+Entong Su (ensu at cs)</p>
+<p><strong>Lecture:</strong> MWF 1:30 PM - 2:30 PM. <a href="https://www.washington.edu/maps/#!/bag">CSE2</a> - G10</p>
+<p><strong>Office Hours:</strong></p>
+<p>Office Hours: <em>Conceptual Questions</em><br>
+Abhishek (Gates 215): TBD</p>
+<p>Lab Office Hours (Allen 022): <em>Hardware and Homeworks</em>:<br>
+TBD<br>
+<p><strong>Ed discussion board</strong> (<a href="https://edstem.org/us/courses/50038/discussion/">link</a>) All questions that are not of a personal nature should be posted to the discussion board.</p>
+<p><strong>Submit anonymous feedback <a href="https://feedback.cs.washington.edu/">here</a></strong>.</p>
+<h2 id="overview">Overview</h2>
+<p>CSE 478 is a project- and discussion-based introduction to robotics. Autonomous vehicles will be used as a running example to introduce the algorithmic building blocks of robotics, and students will use the <a href="https://mushr.io">MuSHR</a> rally car platform to gain hands-on experience. Students will learn the fundamentals of robots, as well as some cutting edge topics including machine learning applications in robotics. Moreover, students will also develop the skills required to read fundamental research papers and discuss the pros and cons of these research papers critically. By the end of this course, students should be able to:</p>
+<ul>
+<li>Identify fundamental abstractions used by mobile robots in the wild (localization, planning, control), explain how they interact, and analyze algorithmic trade-offs within each abstraction.</li>
+<li>Implement the above abstractions to enable a simulated mobile robot to navigate safely and efficiently, using Python and the Robot Operating System (ROS). Conduct principled robot experiments to diagnose and fix bugs across the mobile robot software stack. Implement and validate the software stack on a real hardware platform.</li>
+<li>Be able to read, critique and absorb content in cutting edge research papers in robotics.</li>
+</ul>
+<h2 id="textbooks-optional">Textbooks (Optional)</h2>
+<ul>
+<li><a href="http://www.probabilistic-robotics.org/">Probabilistic Robotics</a>, Sebastian Thrun, Wolfram Burgard and Dieter Fox.</li>
+<li><a href="http://underactuated.mit.edu/">Underactuated Robotics</a>: Algorithms for Walking, Running, Swimming, Flying, and Manipulation, Russ Tedrake, Course Notes for MIT 6.832.</li>
+<li><a href="http://lavalle.pl/planning/">Planning Algorithms</a>, Steven M. LaValle.</li>
+</ul>
+<h2 id="grading">Grading</h2>
+<p>There are four components to your final grade in this course.</p>
+<ul>
+<li>Programming projects x 4 (+1 final project)</li>
+<li>Guest lectures x 2</li>
+<li>Paper readings and written responses x 4</li>
+<li>Final project</li>
+</ul>
+<p>There are four programming projects with the MuSHR platform.
+These must be completed in groups of four (4) students.
+In addition, you will put together everything you&rsquo;ve learned for a final project on the MuSHR platform.</p>
+<p>Programming projects will be graded using an SN scale.</p>
+<p><strong>S (Satisfactory).</strong> Work meets all requirements and displays mastery of core learning goals.<br>
+<strong>N (Not yet).</strong> Work does not meet some requirements and/or displays developing or incomplete mastery of some learning goals and material.</p>
+<p>An N will be accompanied by TA feedback and guidance. You will be able to revise and resubmit to receive an updated grade and feedback.</p>
+<h3 id="rubric">Rubric</h3>
+<p>The following rubric will be used to assign final grades for the course.</p>
+<blockquote>
+<p>at least 3.8</p>
+<ul>
+<li>S on all 5 assignments (projects 1 through 4 + final project)</li>
+<li>2 participation in guest lectures / class</li>
+<li>S on paper presentation</li>
+<li>4 reading responses</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>at least 3.4:</p>
+<ul>
+<li>S on 4 out of 5 assignments</li>
+<li>S on paper presentation</li>
+<li>2 participation in guest lectures / class</li>
+<li>3 reading responses</li>
+</ul>
+<p>at least 3.0:</p>
+<ul>
+<li>S on 3 out of 5 assignments</li>
+<li>N on paper presentation</li>
+<li>1 participation in guest lectures / class</li>
+<li>2 reading responses</li>
+</ul>
+<p>at least 2.0:</p>
+<ul>
+<li>S on 2 out of 5 assignments</li>
+<li>N on paper presentation</li>
+<li>1 participation in guest lectures / class</li>
+<li>1 reading responses</li>
+</ul>
+</blockquote>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>CSE 332 (required), MATH 308 (recommended), CSE 312 (recommended).</p>
+<p>The programming projects require that you work with a Linux and Python environment. Based on feedback from previous offerings, we strongly recommend that you are comfortable with at least one of the two. We welcome students with less experience, but please be prepared to spend some more time at the beginning of the course getting acquainted.</p>
+<h2 id="inclusion">Inclusion</h2>
+<p>Students of all backgrounds and experiences are welcome in this class. You are entitled to be treated respectfully by your classmates and the course staff.</p>
+<p>If at any time you are made to feel uncomfortable, disrespected, or excluded, please contact the instructors or a TA to report the incident. If you feel uncomfortable bringing up an issue with the course staff directly, you may also consider sending <a href="https://feedback.cs.washington.edu/">anonymous course feedback</a> or meeting with the <a href="https://www.cs.washington.edu/academics/ugrad/advising">CSE academic advisors</a> or the <a href="https://www.washington.edu/ombud/">UW Office of the Ombud</a>.</p>
+<h2 id="collaboration">Collaboration</h2>
+<p>Programming projects are designed for a group of 4 students.
+Each group should write their own writeup and code.</p>
+<p>We encourage you to discuss all course activities with your friends and classmates as you work through them. Feel free to talk through struggles with your peers as long as you follow the academic misconduct warnings that have been relayed in every course you&rsquo;ve taken thus far. It&rsquo;s okay to look at online
+resources as long as sources are cited and code isn&rsquo;t copied.</p>
+<p>Here&rsquo;s a <a href="https://www.cs.washington.edu/academics/misconduct/">reference</a> in case you need a refresher.</p>
+<h2 id="disability-resources-for-students">Disability Resources for Students</h2>
+<p>It is the policy and practice of the University of Washington to create inclusive and accessible learning environments consistent with federal and state law. If you have already established accommodations with <a href="https://depts.washington.edu/uwdrs/">Disability Resources for Students (DRS)</a>, please activate your accommodations via myDRS so we
+can discuss how they will be implemented in this course. If you have not yet established services through DRS, but have a temporary health condition or permanent disability that requires accommodations, <a href="https://depts.washington.edu/uwdrs/">contact DRS directly</a> to set up an Access Plan.</p>
+<h2 id="religious-accommodations">Religious Accommodations</h2>
+<p>Washington state law requires that UW develop a policy for accommodation of student absences or significant hardship due to reasons of faith or conscience, or for organized religious activities. The UW’s policy, including more information about how to request an accommodation, is available at <a href="https://registrar.washington.edu/staffandfaculty/religious-accommodations-policy/">Religious Accommodations Policy</a>. Accommodations must be requested within the first two weeks of this course using the <a href="https://registrar.washington.edu/students/religious-accommodations-request/">Religious Accommodations Request form</a>.</p>
+<h2 id="disclaimer">Disclaimer</h2>
+<p>I reserve the right to modify any of these plans as need be during the course of the class; however, I won&rsquo;t do anything capriciously, anything I do change won&rsquo;t be too drastic, and you&rsquo;ll be informed as far in advance as possible.</p>
+<h2 id="acknowledgements">Acknowledgements</h2>
+<p>We thank past instructors <a href="http://www.sanjibanchoudhury.com/">Sanjiban Choudhury</a>, <a href="https://chrismavrogiannis.com/">Chris Mavrogiannis</a>, Brian Hou and <a href="https://homes.cs.washington.edu/~bboots/">Byron Boots</a> for sharing their course materials and insight, as well as the <a href="https://mushr.io">MuSHR</a> team for their software and hardware assistance.</p>
+
+  </div>
+</div>
+
+    </div>
+    <footer class="courseweb-footer">
+  <div class="float-left courseweb-cse-wordmark">
+    <img class="img-fluid"
+         src="/courses/cse478/25wi/img/cse-wordmark.png"
+         alt="Paul G. Allen School of Computer Science & Engineering" />
+  </div>
+  <div class="float-right">
+    <a href="//www.washington.edu/online/terms/">UW Site Use Agreement</a>
+  </div>    
+</footer>
+
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+
+  </body>
 </html>
