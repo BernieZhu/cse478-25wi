@@ -125,6 +125,14 @@ Please download the <code>.utm</code> virtual machine image from <a href="https:
         </figcaption>
 </figure>
 </li>
+<li><p>Set up <code>git</code> to work with GitLab repositories.</p></li>
+<ul>
+<li><p>Make sure you have a GitLab account with your institutional account. Navigate to <a href="https://gitlab.cs.washington.edu/" class="uri">https://gitlab.cs.washington.edu/</a></p></li>
+<li><p>On the VM, configure Git. See instructions <a href="https://docs.gitlab.com/ee/topics/git/how_to_install_git/index.html?tab=Ubuntu+Linux#configure-git">here.</a></p>
+<li><p>Generate your GitLab SSH key. See instructions <a href="https://docs.gitlab.com/ee/user/ssh.html#generate-an-ssh-key-pair"> for generating an SSH key.</a></p>
+<li><p>Add your SSH key to GitLab. See instructions <a href="https://docs.gitlab.com/ee/user/ssh.html#add-an-ssh-key-to-your-gitlab-account"> for adding an SSH key to your GitLab account.</a></p>
+</ul>
+
 </ol>
 <details>
 <summary>
@@ -150,6 +158,8 @@ Recommended: Enable 3D Graphics Acceleration
 </summary>
 <p>Turning on 3D graphics acceleration will improve the frame rate that RViz runs at, so moving the camera around and driving with the keyboard should be much smoother. You’ll need to shut down your virtual machine completely first. Instructions for <a href="https://docs.vmware.com/en/VMware-Workstation-Pro/16.0/com.vmware.ws.using.doc/GUID-F5186526-2382-4F4A-8009-3D07773A1404.html" data-proofer-ignore="true">VMWare Workstation</a> and <a href="https://docs.vmware.com/en/VMware-Fusion/12/com.vmware.fusion.using.doc/GUID-C0E9FDAC-BC40-4A6B-8940-013597CA5E5B.html" data-proofer-ignore="true">VMWare Fusion</a>.</p>
 </details>
+
+
 <h2 id="getting-started-with-ros">2. Getting Started with ROS</h2>
 <p>The <a href="https://en.wikipedia.org/wiki/Robot_Operating_System">Robot Operating System (ROS)</a> is a robotics middleware framework (not actually an operating system) that is commonly used in robotics platforms. MuSHR uses ROS in various ways, the most significant of which is as an interprocess communications provider. By implementing functionalities in many separate “nodes” (each their own process)<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> and relying on ROS mechanisms to communicate, MuSHR can seamlessly integrate custom software with existing, off-the-shelf ROS components. Gaining a grasp of fundamental ROS concepts will help you make the most of the MuSHR system, and the <a href="https://robots.ros.org/">many other robots</a> which use ROS.</p>
 <p>ROS code is organized into <strong>packages</strong>, which can contain executables, libraries and other information like message formats, geometric meshes, and maps. Some of these executables may be <strong>nodes</strong>, processes that register themselves with a <strong>ROS Master</strong> and communicate with other nodes. A package can have multiple nodes. Each package has a <code>package.xml</code> file which specifies dependencies, as well as a <code>CMakeLists.txt</code> makefile. Most ROS code is written in Python or C++ (though there are many community-driven efforts to support other languages, including Rust and JavaScript).</p>
@@ -172,6 +182,7 @@ Terminal Tip: <code>ls</code>
 <p>Let’s update and build the dependencies:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source /opt/ros/noetic/setup.bash</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/dependencies_ws/src/cse478_dependencies/</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git remote set-url origin https://gitlab.cs.washington.edu/cse478/25wi/cse478_dependencies.git</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git pull <span class="at">--recurse-submodules</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rosdep install <span class="at">--from-paths</span> . <span class="at">--ignore-src</span> <span class="at">-y</span> <span class="at">-r</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/dependencies_ws</span>
@@ -185,6 +196,18 @@ Terminal Tip: <code>cd</code>
 </details>
 <p>You’ll see a lot of colorful output, ending with a message saying how many packages were built. All <code>catkin build</code> did was compile a bunch of executables and dump build artifacts into the <code>build</code> and <code>devel</code> folders. However, your shell doesn’t know how to find and run them because they aren’t on the <a href="http://www.linfo.org/path_env_var.html"><code>PATH</code></a>. You will need to <strong>activate the workspace</strong> by running a special script that configures your shell’s environment variables to know about all of the build output. To activate a workspace, you run:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source ~/dependencies_ws/devel/setup.bash</span></code></pre></div>
+
+<p> Let's get ready your class repo. Navigate to <a href="https://gitlab.cs.washington.edu/cse478/25wi/mushr478" class="uri">https://gitlab.cs.washington.edu/cse478/25wi/mushr478</a> and fork the repo within the same namespace. Your project name should be <code>mushr478-[your teamname]</code></p>
+<figure class="figure mw-50 w-50px">
+  <img src="create_repo.png"
+       alt="Fork class repo settings"
+       class="figure-img img-fluid"
+       width="50%"
+       height="50%"
+  />
+</figure>
+
+
 <p>Let’s set up your project workspace. Clone your course repository into the <code>~/mushr_ws/src</code> folder:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/mushr_ws/src/</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git clone git@gitlab.cs.washington.edu:cse478/25wi/your_repo_name.git mushr478</span></code></pre></div>
