@@ -94,21 +94,21 @@
     <h1>MuSHR Lab Information</h1>
 
     <h2 id="overview">Overview</h2>
-<p>Please read this entire guide carefully before coming to the MuSHR Lab (CSE 022) to conduct experiments. <!--We have prepared **5 MuSHR cars (v3)** and **7 Ubuntu 20.04 workstations**.--></p>
+<p>Please read this entire guide carefully before coming to the MuSHR Lab (CSE 002) to conduct experiments. <!--We have prepared **5 MuSHR cars (v3)** and **7 Ubuntu 20.04 workstations**.--></p>
 <p>Questions or issues? Contact course staff on Ed or email <a href="mailto:sidtalia@cs.washington.edu">Sidharth Talia</a>.</p>
 <h4 id="location">Location</h4>
-<p>CSE 022 is located in the basement floor of the Allen Center. When you enter into the Allen lobby, take the elevator down one floor, then take a right out of the elevators. You will need your Husky card to access 022.</p>
+<p>CSE 002 is located in the basement floor of the Allen Center. When you enter into the Allen lobby, take the elevator down one floor, then take a left out of the elevators. You will need your Husky card to access 002.</p>
 <h2 id="lab-usage-and-safety">1. Lab Usage and Safety</h2>
 <p>The lab will be open throughout the week.</p>
 <h4 id="after-entering-the-lab">After entering the lab</h4>
 <ol type="1">
 <li><p>Remember to keep your Husky Card with you at all times. CSE 022 requires card-key access. Don’t lock yourself out!</p></li>
 <li><p><strong>Do not move the furniture</strong> in the middle of the room. This is a part of the map, which you will use for localization.</p></li>
-<li><p>Start charging batteries (2 per car) with chargers located next to your workstation. <strong>Only charge batteries when you are physically present in the lab.</strong> Do not leave them charging overnight.</p></li>
+<li><p>Start charging LiPo batteries (1 per car) with chargers located near your workstation. <strong>Only charge batteries when you are physically present in the lab.</strong> Do not leave them charging overnight.</p></li>
 </ol>
 <h4 id="leaving-the-lab">Leaving the lab</h4>
 <ol type="1">
-<li><p>Unplug the batteries from your MuSHR car and return them to their table. Put the car back on the table.</p></li>
+<li><p>Unplug the battery from your MuSHR car and return them to their table. Put the car back on the table.</p></li>
 <li><p>Don’t leave your belongings. Clean up your workspace (any cables, tools, etc.) and return anything you took to where you found them.</p></li>
 <li><p>Push your changes to GitLab. You can leave your code on the car, but please don’t change any files outside of <code>~/catkin_ws</code>.</p></li>
 <li><p><strong>If you are the last person to leave the lab</strong>: do a quick check around the room to make sure that none of the chargers are in charging mode (should flash green to indicate not-charging), and turn off the lights.</p></li>
@@ -117,8 +117,8 @@
 <p><strong>Official Guides</strong>: <a href="https://mushr.io/tutorials/quickstart/">MuSHR Quickstart</a> | <a href="https://mushr.io/hardware/build_instructions/">Build Instructions</a> | <a href="https://mushr.io/tutorials/overview/">System Overview</a> | <a href="https://mushr.io/tutorials/first_steps/">Teleoperation</a></p>
 <p>The following is a <em>supplementary</em> guide to getting started with MuSHR cars in the lab. Reading the official guides before coming in will save you valuable debugging time.</p>
 <ol type="1">
-<li><p>Each MuSHR car requires <strong>2 batteries</strong>: one for the servo motor and another for the on-board Jetson computer. The motor battery has red-circular connectors and the Jetson battery has white clip-connectors(or red-circular connectors). The batteries can be found on the metal shelf in the middle of the room. Press the blue button on the charger to start/stop charging. <strong>Remember to only charge batteries when you are physically present in the lab.</strong></p>
-<figure class="figure mw-100 w-500px">
+<li><p>Each MuSHR car requires <strong>1 LiPo battery</strong> to power the servo motor and the on-board Jetson computer. Please review <a href="https://github.com/prl-mushr/hound_core/blob/main/Battery_instructions.md">LiPo battery guide</a> for information  about how to use/charge the LiPo batteries. <strong>Remember to only charge batteries when you are physically present in the lab.</strong></p>
+<!-- <figure class="figure mw-100 w-500px">
     
     <img src="charger.png"
          alt="(Left) Not charging: flashing green light vs. (Right) Charging: solid red light"
@@ -126,9 +126,9 @@
     /> <figcaption class="figure-caption">
             <p>(Left) Not charging: flashing green light vs. (Right) Charging: solid red light</p>
         </figcaption>
-</figure>
+</figure> -->
 </li>
-<li><p>After connecting the batteries, the on-board Jetson computer should boot up within a few seconds (2 mins max) and a green light should turn on inside the case of the car. The motor battery can be placed in the holder at the bottom of the car, and the Jetson battery can be placed inside the 3D-printed shell. Ensure that the cables and connectors won’t get tangled with the wheels once they start spinning.</p></li>
+<li><p>After connecting the LiPo battery, the on-board Jetson computer should boot up within a few seconds (2 mins max) and a green light should turn on inside the case of the car. The battery should be placed in the holder at the bottom of the car. Ensure that the cables and connectors won’t get tangled with the wheels once they start spinning.</p></li>
 <li><p>Each car is connected to the “University of Washington” WiFi and has a static IP address. Check <a href="#mushr-car-reference">here</a> to find the username and IP address for your car. Then, from your workstation, SSH into the car <code>ssh &lt;username&gt;@&lt;robot_ip_addr&gt; -X</code> with the password <code>prl_robot</code>. <strong>Do not change the password, username, or hostname of the robot</strong>, otherwise the car cannot be used by the next person.</p></li>
 <li><p>To set up the network connection, open a separate terminal from the workstation and set <code>export ROS_MASTER_URI=http://&lt;robot_ip_addr&gt;:11311</code>. This connects your workstation ROS session to the car (using the car as the <a href="http://wiki.ros.org/Master">ROS Master</a>).</p>
 <blockquote>
@@ -185,7 +185,7 @@ Teleoperation/Joystick not working
 <summary>
 VESC Controller Error
 </summary>
-<p>VESC is the servo motor controller. This means the motor battery needs to be charged or isn’t connected properly.</p>
+<p>VESC is the servo motor controller. This means the battery needs to be charged or isn’t connected properly.</p>
 </details>
 <details>
 <summary>
