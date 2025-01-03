@@ -402,7 +402,7 @@ p_\text{rand}(z_t^k | \mathbf{x}_t, m) &amp;=
 <h2 id="running-on-the-car">Running on the Car</h2>
 <p>Follow the <a href="/courses/cse478/25wi/mushr_lab/">Lab Guide</a> to learn how to run teleop on the car and transfer your code to the car.</p>
 <p>In the MuSHR Lab, place your MuSHR car at the origin of the map. Start teleop, then in another terminal run the following command to specify the map.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rosrun map_server map_server <span class="va">$(</span><span class="ex">rospack</span> find cse478<span class="va">)</span>/maps/cse022.yaml</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rosrun map_server map_server <span class="va">$(</span><span class="ex">rospack</span> find cse478<span class="va">)</span>/maps/cse002.yaml</span></code></pre></div>
 <p>In yet another terminal, start the particle filter with the following command.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch localization particle_filter_sim.launch use_namespace:=true publish_tf:=true tf_prefix:=<span class="st">&quot;car/&quot;</span></span></code></pre></div>
 <p>On your workstation, start Rviz and visualize:</p>
