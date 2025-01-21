@@ -400,12 +400,40 @@ p_\text{rand}(z_t^k | \mathbf{x}_t, m) &amp;=
 </ul>
 <p>It’s unlikely that your filter will produce exactly the same results as the reference solution, but the expected poses of both filters should be similar at all times. The terminal will print the median <span class="math inline">\(x, y, \theta\)</span> errors. At the end of the run on <code>full.bag</code> your median errors should all be less than 0.1.</p>
 <h2 id="running-on-the-car">Running on the Car</h2>
-<p>Follow the <a href="/courses/cse478/25wi/mushr_lab/">Lab Guide</a> to learn how to run teleop on the car and transfer your code to the car.</p>
+
+Let's prepare the car for running our localization algorithm:
+<ol>
+  <li>ssh to the car and run the teleop.  Follow the steps on the <a href="/courses/cse478/25wi/mushr_lab/">Lab Guide.</a></li>
+  <li>Open a new terminal pointing to <code>mushr_ws/src/</code>. Transfer your code to the car: <code>scp -r mushr478/ robot@172.16.77.[car_number]:/home/robot/catkin_ws/src/musht478</code> </li>
+</ol>
+
+Notice that on the car you will use the <code>catkin_ws</code> workspace. The only folder that you should modify on the car is <code>catkin_ws/src/mushr478/</code>. 
+
+Now, on the car (ssh to the car every time opening a new terminal):
+<ol>
+  <li> Build your workspace  (<code>catkin build</code>)</li>
+  <ul>
+    <li> In case of error, clean your <code>catkin_ws</code> (<code>catkin clean</code>) and build it again (<code>catkin build</code>). Don't forget to source the workspace (<code>source ~/catkin_ws/devel/setup.bash</code>) every time opening a new terminal.</li>
+  </ul>
+    <li> After sourcing the workspace, run the following command to specify the map:</li>
+  <div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rosrun map_server map_server <span class="va">$(</span><span class="ex">rospack</span> find cse478<span class="va">)</span>/maps/cse002.yaml</span></code></pre></div>
+  <li> In another terminal (source the workspace first), start the particle filter with the following command:</li>
+  <div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch localization particle_filter_sim.launch use_namespace:=true publish_tf:=true tf_prefix:=<span class="st">&quot;car/&quot;</span></span></code></pre></div>
+</ol>
+
+After, on your workstation open a new terminal and source ros, dependencies_ws and mushr_ws.
+<ol>
+  <li>Set the rosmaster to the one running on your car. For doing so, <code>export ROS_MASTER_URI=http://[ROBOT_IP]:11311</code></li>
+  <li>Using the same terminal, run <code>rviz</code></li>
+</ol>
+
+
+<!-- <p>Follow the <a href="/courses/cse478/25wi/mushr_lab/">Lab Guide</a> to learn how to run teleop on the car and transfer your code to the car.</p>
 <p>In the MuSHR Lab, place your MuSHR car at the origin of the map. Start teleop, then in another terminal run the following command to specify the map.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rosrun map_server map_server <span class="va">$(</span><span class="ex">rospack</span> find cse478<span class="va">)</span>/maps/cse002.yaml</span></code></pre></div>
 <p>In yet another terminal, start the particle filter with the following command.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch localization particle_filter_sim.launch use_namespace:=true publish_tf:=true tf_prefix:=<span class="st">&quot;car/&quot;</span></span></code></pre></div>
-<p>On your workstation, start Rviz and visualize:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> roslaunch localization particle_filter_sim.launch use_namespace:=true publish_tf:=true tf_prefix:=<span class="st">&quot;car/&quot;</span></span></code></pre></div> -->
+<p>On your workstation, use Rviz to visualize:</p>
 <ul>
 <li>The <code>/map</code> Map topic</li>
 <li>The <code>/pf/inferred_pose</code> Pose topic</li>
